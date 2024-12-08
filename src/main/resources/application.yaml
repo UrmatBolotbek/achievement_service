@@ -23,8 +23,6 @@ spring:
       host: localhost
       channel:
         profile_pic: profile-pic
-        achievement: achievement_channel
-        follower: follower_channel
 
 server:
   port: 8085
@@ -36,3 +34,7 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+
+achievement:
+  profile-pic: handsome
