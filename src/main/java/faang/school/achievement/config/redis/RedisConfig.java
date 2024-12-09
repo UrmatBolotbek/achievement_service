@@ -25,7 +25,7 @@ public class RedisConfig {
     private String redisHost;
     @Value("${spring.data.redis.port}")
     private int redisPort;
-    @Value("${spring.data.redis.channel.profile_pic}")
+    @Value("${spring.data.redis.channels.profile-pic-channel}")
     private String topicProfilePic;
 
     @Bean
@@ -48,13 +48,12 @@ public class RedisConfig {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
 
-        MessageListenerAdapter projectViewListener = getListenerAdapter(profilePicEventListener);
-        container.addMessageListener(projectViewListener, new ChannelTopic(topicProfilePic));
+        addMessageListenerInContainer(profilePicEventListener, topicProfilePic, container);
         return container;
     }
 
-    private MessageListenerAdapter getListenerAdapter(MessageListener listenerAdapter) {
-        return new MessageListenerAdapter(listenerAdapter);
+    private void addMessageListenerInContainer(MessageListener listenerAdapter, String topic, RedisMessageListenerContainer container) {
+        container.addMessageListener(new MessageListenerAdapter(listenerAdapter), new ChannelTopic(topic));
     }
 
 }
