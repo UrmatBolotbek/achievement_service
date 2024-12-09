@@ -11,8 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class AbstractAchievementHandler {
 
-    private boolean publish = false;
-
     private final AchievementService achievementService;
     private final AchievementRepository achievementRepository;
 
@@ -24,17 +22,12 @@ public abstract class AbstractAchievementHandler {
         if (!result) {
             achievementService.createProgressIfNecessary(userId, achievement.getId());
             AchievementProgress achievementProgress = achievementService.getProgress(userId, achievement.getId());
-            achievementProgress.increment();
             if(achievement.getPoints() == achievementProgress.getCurrentPoints()) {
                 achievementService.giveAchievement(userId, achievement);
-                publish = true;
             }
         }
     }
 
-    protected boolean isPublish() {
-        return publish;
-    }
 }
 
 

@@ -1,8 +1,10 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.event.PublishEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.publisher.EventPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ public class AchievementService {
 
     private final UserAchievementRepository userAchievementRepository;
     private final AchievementProgressRepository achievementProgressRepository;
+    private final EventPublisher eventPublisher;
 
 
     public boolean hasAchievement(long userId, long achievementId) {
@@ -27,8 +30,10 @@ public class AchievementService {
     }
 
     public AchievementProgress getProgress(long userId, long achievementId) {
-        return achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
+        AchievementProgress achievementProgress = achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
                 .orElseThrow(()-> new RuntimeException("error"));
+        achievementProgress.increment();
+        return achievementProgress;
     }
 
     public void giveAchievement(long userId, Achievement achievement) {
@@ -37,6 +42,13 @@ public class AchievementService {
                 .achievement(achievement)
                 .build();
         userAchievementRepository.save(userAchievement);
+        PublishEvent publishEvent = PublishEvent.builder()
+                .userId(userId)
+                .achievementId(achievement.getId())
+                .achievementName(achievement.getTitle())
+                .achievementDescription(achievement.getDescription())
+                .build();
+        eventPublisher.publish(publishEvent);
     }
 
 }

@@ -21,8 +21,8 @@ spring:
     redis:
       port: 6379
       host: localhost
-      channel:
-        profile_pic: profile-pic
+      channels:
+        achievement-channel: achievement
 
 server:
   port: 8085
