@@ -3,6 +3,7 @@ package faang.school.achievement.event_handler;
 import faang.school.achievement.event.ProfilePicEvent;
 import faang.school.achievement.service.AchievementService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,6 +17,7 @@ public class HandsomeAchievementHandler extends AbstractAchievementHandler<Profi
     }
 
     @Override
+    @Async("fixedThreadPool")
     public void handle(ProfilePicEvent event) {
         handleAchievement(event.getUserId(), profilePic);
     }
