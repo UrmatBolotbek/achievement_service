@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Slf4j
+@Component
 public abstract class AbstractEventPublisher<T> {
 
     private final RedisTemplate<String, Object> redisTemplate;

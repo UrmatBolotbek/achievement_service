@@ -11,8 +11,11 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class AbstractAchievementHandler {
 
+    private boolean publish = false;
+
     private final AchievementService achievementService;
     private final AchievementRepository achievementRepository;
+
 
     protected void handleAchievement(long userId, String achievementName) {
         Achievement achievement = achievementRepository.findByTitle(achievementName)
@@ -24,8 +27,13 @@ public abstract class AbstractAchievementHandler {
             achievementProgress.increment();
             if(achievement.getPoints() == achievementProgress.getCurrentPoints()) {
                 achievementService.giveAchievement(userId, achievement);
+                publish = true;
             }
         }
+    }
+
+    protected boolean isPublish() {
+        return publish;
     }
 }
 

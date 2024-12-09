@@ -32,13 +32,11 @@ public class AchievementService {
     }
 
     public void giveAchievement(long userId, Achievement achievement) {
-        UserAchievement userAchievement = new UserAchievement();
-        userAchievement.setUserId(userId);
-        userAchievement.setAchievement(achievement);
+        UserAchievement userAchievement = UserAchievement.builder()
+                .userId(userId)
+                .achievement(achievement)
+                .build();
         userAchievementRepository.save(userAchievement);
     }
-
-
-
 
 }
