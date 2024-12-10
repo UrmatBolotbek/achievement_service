@@ -8,6 +8,7 @@ import faang.school.achievement.publisher.EventPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,9 +26,8 @@ public class AchievementService {
 
     public Achievement getAchievement(String achievementName) {
        return achievementRepository.findByTitle(achievementName)
-                .orElseThrow(() -> new RuntimeException("No achievement with name " + achievementName + " exists"));
+                .orElseThrow(() -> new EntityNotFoundException("No achievement with name " + achievementName + " exists"));
     }
-
 
     public boolean hasAchievement(long userId, long achievementId) {
         return userAchievementRepository.existsByUserIdAndAchievementId(userId, achievementId);
@@ -35,11 +35,12 @@ public class AchievementService {
 
     public void createProgressIfNecessary(long userId, long achievementId) {
        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+        log.info("Created progress for user {} achievement {}", userId, achievementId);
     }
 
     public long getProgress(long userId, long achievementId) {
         AchievementProgress achievementProgress = achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(()-> new IllegalArgumentException("\n" +
+                .orElseThrow(()-> new EntityNotFoundException("\n" +
                         "Progress for achievements " + achievementId + " and for the user " + userId + " was not found"));
         achievementProgress.increment();
         log.info("Achievement progress for authorId: {} has incremented successfully", userId);
