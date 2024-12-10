@@ -21,12 +21,20 @@ spring:
     redis:
       port: 6379
       host: localhost
-      channel:
-        achievement: achievement_channel
-        follower: follower_channel
+      channels:
+        achievement-channel: achievement-channel
+        recommendation-channel: recommendation-given
 
 server:
   port: 8085
+
+achievement:
+  nice-guy: NICE_GUY
+
+async:
+  pool-size: 10
+  max-pool-size: 20
+  keep-alive-time: 10
 
 logging:
   level:
