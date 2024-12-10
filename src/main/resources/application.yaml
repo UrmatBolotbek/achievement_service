@@ -39,3 +39,9 @@ project-service:
 
 achievement:
   profile-pic: HANDSOME
+
+
+async:
+  pool-size: 10
+  max-pool-size: 20
+  keep-alive-time: 10
