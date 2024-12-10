@@ -17,7 +17,7 @@ public class HandsomeAchievementHandler extends AbstractAchievementHandler<Profi
     }
 
     @Override
-    @Async("fixedThreadPool")
+//    @Async("fixedThreadPool")
     public void handle(ProfilePicEvent event) {
         handleAchievement(event.getUserId(), profilePic);
     }
