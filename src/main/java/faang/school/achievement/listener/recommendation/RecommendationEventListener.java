@@ -6,12 +6,11 @@ import faang.school.achievement.event_handler.EventHandler;
 import faang.school.achievement.listener.AbstractEventListener;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RecommendationEventListener extends AbstractEventListener<RecommendationEvent> implements MessageListener {
+public class RecommendationEventListener extends AbstractEventListener<RecommendationEvent> {
 
     @Value("${spring.data.redis.channels.recommendation-channel}")
     private String topicRecommendation;
