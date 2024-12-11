@@ -21,8 +21,8 @@ public abstract class AbstractEventListener<T> implements MessageListener {
 
     @PostConstruct
     public void init() {
-        container.addMessageListener(this, new ChannelTopic(getTopicName()));
-        log.info("Registered listener {} on topic {}", this.getClass().getSimpleName(), getTopicName());
+            container.addMessageListener(this, new ChannelTopic(getTopicName()));
+            log.info("Registered listener {} on topic {}", this.getClass().getSimpleName(), getTopicName());
 
     }
 

@@ -42,4 +42,5 @@ public class RedisConfig {
         container.setConnectionFactory(connectionFactory);
         return container;
     }
+  
 }

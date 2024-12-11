@@ -25,7 +25,7 @@ public class AchievementService {
 
 
     public Achievement getAchievement(String achievementName) {
-        return achievementRepository.findByTitle(achievementName)
+       return achievementRepository.findByTitle(achievementName)
                 .orElseThrow(() -> new EntityNotFoundException("No achievement with name " + achievementName + " exists"));
     }
 
@@ -34,7 +34,7 @@ public class AchievementService {
     }
 
     public void createProgressIfNecessary(long userId, long achievementId) {
-        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+       achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
         log.info("Created progress for user {} achievement {}", userId, achievementId);
     }
 
@@ -64,5 +64,5 @@ public class AchievementService {
         eventPublisher.publish(publishEvent);
         log.info("Achievement: {} for authorId: {} publish successfully", achievement, userId);
     }
-
+  
 }
