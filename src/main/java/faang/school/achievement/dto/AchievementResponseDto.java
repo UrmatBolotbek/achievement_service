@@ -8,7 +8,7 @@ import lombok.Data;
 @Builder
 public class AchievementResponseDto {
 
-    private int id;
+    private long id;
     private String title;
     private String description;
     private Rarity rarity;

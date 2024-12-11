@@ -1,11 +1,11 @@
 package faang.school.achievement.dto;
 
 import faang.school.achievement.model.Rarity;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@NoArgsConstructor
 public class AchievementRequestFilterDto {
 
     private String title;

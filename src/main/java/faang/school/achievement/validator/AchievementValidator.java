@@ -27,12 +27,10 @@ public class AchievementValidator {
 
     public Achievement validateAchievement(long achievementId) {
         Optional<Achievement> achievementOptional = achievementRepository.findById(achievementId);
-        if (achievementOptional.isPresent()) {
-            return achievementOptional.get();
+        if (achievementOptional.isEmpty()) {
+            throw new EntityNotFoundException("Achievement with achievementId " + achievementId + " not found");
         }
-        log.warn("Achievement with id {} not found", achievementId);
-        return null;
+        return achievementOptional.get();
     }
-
 
 }

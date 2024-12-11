@@ -35,7 +35,7 @@ public class AchievementService {
     private final AchievementMapper mapper;
     private final AchievementValidator achievementValidator;
 
-    public List<AchievementResponseDto> getAchievements(AchievementRequestFilterDto requestFilterDto) {
+    public List<AchievementResponseDto> getAchievementsWithFilters(AchievementRequestFilterDto requestFilterDto) {
         Stream<Achievement> achievements = StreamSupport.stream(achievementRepository.findAll().spliterator(),
                 false).toList().stream();
         filters.stream()
@@ -48,27 +48,20 @@ public class AchievementService {
     public List<AchievementResponseDto> getAchievementsByUserId(long userId) {
         achievementValidator.userValidation(userId);
         List<UserAchievement> achievementsOfUser = userAchievementRepository.findByUserId(userId);
-        List<Achievement> achievements = achievementsOfUser.stream().map(UserAchievement::getAchievement)
-                .map(achievement -> achievementValidator.validateAchievement(achievement.getId()))
-                .toList();
+        List<Achievement> achievements = achievementsOfUser.stream().map(UserAchievement::getAchievement).toList();
         log.info("Getting a list of achievement for user id {}", userId);
         return mapper.toResponseDtoList(achievements);
     }
 
     public AchievementResponseDto getAchievementById(long achievementId) {
         Achievement achievement = achievementValidator.validateAchievement(achievementId);
-        if (achievement == null) {
-            throw new EntityNotFoundException("Achievement with achievementId " + achievementId + " not found");
-        }
         return mapper.achievementToResponseDto(achievement);
     }
 
     public List<AchievementResponseDto> getAchievementsInProgressByUserId(long userId) {
         achievementValidator.userValidation(userId);
         List<AchievementProgress> achievementProgresses = achievementProgressRepository.findByUserId(userId);
-        List<Achievement> achievements = achievementProgresses.stream().map(AchievementProgress::getAchievement)
-                .map(achievement -> achievementValidator.validateAchievement(achievement.getId()))
-                .toList();
+        List<Achievement> achievements = achievementProgresses.stream().map(AchievementProgress::getAchievement).toList();
         log.info("Getting a list of achievement in progress for user id {}", userId);
         return mapper.toResponseDtoList(achievements);
     }
