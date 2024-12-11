@@ -7,13 +7,12 @@ import faang.school.achievement.listener.AbstractEventListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class ProfilePicEventListener extends AbstractEventListener<ProfilePicEvent> implements MessageListener {
+public class ProfilePicEventListener extends AbstractEventListener<ProfilePicEvent> {
 
     @Value("${spring.data.redis.channels.profile-pic-channel}")
     private String topicProfilePic;

@@ -14,19 +14,16 @@ import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 @Slf4j
-public abstract class AbstractEventListener<T> {
+public abstract class AbstractEventListener<T> implements MessageListener {
 
     private final ObjectMapper objectMapper;
     private final RedisMessageListenerContainer container;
 
     @PostConstruct
     public void init() {
-        if (this instanceof MessageListener) {
-            container.addMessageListener((MessageListener) this, new ChannelTopic(getTopicName()));
+            container.addMessageListener(this, new ChannelTopic(getTopicName()));
             log.info("Registered listener {} on topic {}", this.getClass().getSimpleName(), getTopicName());
-        } else {
-            log.warn("Listener {} does not implement MessageListener, skipping registration.", this.getClass().getSimpleName());
-        }
+
     }
 
     protected void handleEvent(Message message, Class<T> clazz, Consumer<T> consumer) {
