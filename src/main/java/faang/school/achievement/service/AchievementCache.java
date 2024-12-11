@@ -25,7 +25,7 @@ public class AchievementCache {
     private final AchievementMapper achievementMapper;
 
     @EventListener(ApplicationReadyEvent.class)
-    @Async("fixedThreadPool")
+    @Async("cashThreadPool")
     public void initCache() {
         log.info("Starting cache initialization");
         List<AchievementDto> allAchievementDtos = achievementRepository.findAll().stream()
