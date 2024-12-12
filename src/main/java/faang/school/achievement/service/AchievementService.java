@@ -84,4 +84,4 @@ public class AchievementService {
         return achievementRepository.findByTitle(title)
                 .orElseThrow(() -> new EntityNotFoundException("No achievement with name " + title + " exists"));
     }
-}
+  }

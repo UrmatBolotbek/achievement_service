@@ -27,4 +27,3 @@ public abstract class AbstractAchievementHandler<T> implements EventHandler<T> {
 
 }
 
-
