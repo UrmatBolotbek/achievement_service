@@ -14,6 +14,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface AchievementMapper {
+
     @Mapping(target = "acceptedUserIds", source = "userAchievements", qualifiedByName = "mapUserAchievementsToIds")
     AchievementDto toDto(Achievement achievement);
 
