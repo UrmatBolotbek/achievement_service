@@ -64,5 +64,5 @@ public class AchievementService {
         eventPublisher.publish(publishEvent);
         log.info("Achievement: {} for authorId: {} publish successfully", achievement, userId);
     }
-
+  
 }
