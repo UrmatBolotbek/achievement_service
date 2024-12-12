@@ -4,8 +4,6 @@ import faang.school.achievement.event.PublishEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.model.dto.AchievementDto;
-import faang.school.achievement.model.mapper.AchievementMapper;
 import faang.school.achievement.publisher.EventPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
@@ -28,20 +26,15 @@ public class AchievementService {
     private final EventPublisher eventPublisher;
     private final AchievementRepository achievementRepository;
     private final AchievementCache achievementCache;
-    private final AchievementMapper achievementMapper;
 
     @Transactional
-    public AchievementDto getByTitle(String title) {
+    public Achievement getByTitle(String title) {
         return Optional.ofNullable(achievementCache.get(title))
                 .orElseGet(() -> {
-                    Achievement entity = getFromBD(title);
+                    Achievement entity = getByTitleFromBD(title);
                     achievementCache.putInCache(entity);
-                    return achievementMapper.toDto(entity);
+                    return entity;
                 });
-    }
-
-    public Achievement getAchievement(String achievementName) {
-        return getFromBD(achievementName);
     }
 
     public boolean hasAchievement(long userId, long achievementId) {
@@ -80,8 +73,8 @@ public class AchievementService {
         log.info("Achievement: {} for authorId: {} publish successfully", achievement, userId);
     }
 
-    private Achievement getFromBD(String title) {
+    private Achievement getByTitleFromBD(String title) {
         return achievementRepository.findByTitle(title)
                 .orElseThrow(() -> new EntityNotFoundException("No achievement with name " + title + " exists"));
     }
-  }
+}

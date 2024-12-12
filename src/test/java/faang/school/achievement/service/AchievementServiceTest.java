@@ -4,8 +4,6 @@ import faang.school.achievement.event.PublishEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.model.dto.AchievementDto;
-import faang.school.achievement.model.mapper.AchievementMapper;
 import faang.school.achievement.publisher.EventPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
@@ -52,12 +50,8 @@ public class AchievementServiceTest {
     private AchievementRepository achievementRepository;
     @Mock
     private AchievementCache achievementCache;
-    @Mock
-    private AchievementMapper achievementMapper;
-
     private Achievement achievement;
     private AchievementProgress achievementProgress;
-    private AchievementDto achievementDto;
 
     @BeforeEach
     public void setUp() {
@@ -70,18 +64,14 @@ public class AchievementServiceTest {
                 .currentPoints(10L)
                 .userId(19L)
                 .build();
-        achievementDto = AchievementDto.builder()
-                .id(25L)
-                .title("HANDSOME")
-                .build();
     }
 
     @Test
     void testGetByTitleFoundInCache() {
-        when(achievementCache.get("HANDSOME")).thenReturn(achievementDto);
+        when(achievementCache.get("HANDSOME")).thenReturn(achievement);
 
-        AchievementDto result = achievementService.getByTitle("HANDSOME");
-        Assertions.assertEquals(achievementDto, result);
+        Achievement result = achievementService.getByTitle("HANDSOME");
+        Assertions.assertEquals(achievement, result);
         verifyNoInteractions(achievementRepository);
         verify(achievementCache, never()).putInCache(any(Achievement.class));
     }
@@ -90,10 +80,9 @@ public class AchievementServiceTest {
     void testGetByTitleNotInCacheButInDB() {
         when(achievementCache.get("HANDSOME")).thenReturn(null);
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
-        when(achievementMapper.toDto(achievement)).thenReturn(achievementDto);
 
-        AchievementDto result = achievementService.getByTitle("HANDSOME");
-        Assertions.assertEquals(achievementDto, result);
+        Achievement result = achievementService.getByTitle("HANDSOME");
+        Assertions.assertEquals(achievement, result);
         verify(achievementCache).putInCache(achievement);
     }
 
@@ -109,13 +98,13 @@ public class AchievementServiceTest {
     @Test
     void testGetAchievementSuccess() {
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
-        assertDoesNotThrow(() -> achievementService.getAchievement("HANDSOME"));
+        assertDoesNotThrow(() -> achievementService.getByTitle("HANDSOME"));
     }
 
     @Test
     void testGetAchievementFailure() {
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> achievementService.getAchievement("HANDSOME"));
+        assertThrows(EntityNotFoundException.class, () -> achievementService.getByTitle("HANDSOME"));
     }
 
     @Test

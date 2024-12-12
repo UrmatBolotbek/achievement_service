@@ -1,8 +1,6 @@
 package faang.school.achievement.service;
 
 import faang.school.achievement.model.Achievement;
-import faang.school.achievement.model.dto.AchievementDto;
-import faang.school.achievement.model.mapper.AchievementMapper;
 import faang.school.achievement.repository.AchievementRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +20,7 @@ public class AchievementCache {
     private static final String PREFIX = "achievement";
 
     private final AchievementRepository achievementRepository;
-    private final RedisTemplate<String, AchievementDto> achievementRedisTemplate;
-    private final AchievementMapper achievementMapper;
+    private final RedisTemplate<String, Achievement> achievementRedisTemplate;
 
     @EventListener(ApplicationReadyEvent.class)
     @Async("fixedThreadPool")
@@ -40,13 +37,12 @@ public class AchievementCache {
         log.info("Cache initialization completed. Loaded {} achievements.", allAchievements.size());
     }
 
-    public AchievementDto get(String title) {
+    public Achievement get(String title) {
         return achievementRedisTemplate.opsForValue().get(buildKey(title));
     }
 
     public void putInCache(Achievement achievement) {
-        AchievementDto dto = achievementMapper.toDto(achievement);
-        achievementRedisTemplate.opsForValue().set(buildKey(dto.getTitle()), dto);
+        achievementRedisTemplate.opsForValue().set(buildKey(achievement.getTitle()), achievement);
     }
 
     private String buildKey(String title) {

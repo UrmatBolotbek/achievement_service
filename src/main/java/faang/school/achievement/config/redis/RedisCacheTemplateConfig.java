@@ -1,6 +1,6 @@
 package faang.school.achievement.config.redis;
 
-import faang.school.achievement.model.dto.AchievementDto;
+import faang.school.achievement.model.Achievement;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -12,16 +12,16 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class RedisCacheTemplateConfig {
 
     @Bean
-    public Jackson2JsonRedisSerializer<AchievementDto> achievementRedisSerializer() {
-        return new Jackson2JsonRedisSerializer<>(AchievementDto.class);
+    public Jackson2JsonRedisSerializer<Achievement> achievementRedisSerializer() {
+        return new Jackson2JsonRedisSerializer<>(Achievement.class);
     }
 
     @Bean
-    public RedisTemplate<String, AchievementDto> achievementRedisTemplate(
+    public RedisTemplate<String, Achievement> achievementRedisTemplate(
             JedisConnectionFactory connectionFactory,
-            Jackson2JsonRedisSerializer<AchievementDto> achievementRedisSerializer) {
+            Jackson2JsonRedisSerializer<Achievement> achievementRedisSerializer) {
 
-        RedisTemplate<String, AchievementDto> template = new RedisTemplate<>();
+        RedisTemplate<String, Achievement> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(achievementRedisSerializer);

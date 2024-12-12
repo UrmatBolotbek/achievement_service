@@ -34,7 +34,7 @@ public class NiceGuyAchievementHandlerTest {
 
     @Test
     void testHandleSuccess() {
-        when(service.getAchievement("NICE GUY")).thenReturn(achievement);
+        when(service.getByTitle("NICE GUY")).thenReturn(achievement);
         when(service.hasAchievement(1L,9L)).thenReturn(false);
         when(service.getProgress(1L,9L)).thenReturn(5L);
 

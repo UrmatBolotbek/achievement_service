@@ -14,7 +14,7 @@ public abstract class AbstractAchievementHandler<T> implements EventHandler<T> {
     private final AchievementService achievementService;
 
     protected void handleAchievement(long userId, String achievementName) {
-        Achievement achievement = achievementService.getAchievement(achievementName);
+        Achievement achievement = achievementService.getByTitle(achievementName);
         if (!achievementService.hasAchievement(userId, achievement.getId())) {
             achievementService.createProgressIfNecessary(userId, achievement.getId());
             long achievementProgressPoints = achievementService.getProgress(userId, achievement.getId());
