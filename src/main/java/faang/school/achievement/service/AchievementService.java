@@ -4,6 +4,8 @@ import faang.school.achievement.event.PublishEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.model.dto.AchievementDto;
+import faang.school.achievement.model.mapper.AchievementMapper;
 import faang.school.achievement.publisher.EventPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
@@ -12,6 +14,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -22,11 +27,21 @@ public class AchievementService {
     private final AchievementProgressRepository achievementProgressRepository;
     private final EventPublisher eventPublisher;
     private final AchievementRepository achievementRepository;
+    private final AchievementCache achievementCache;
+    private final AchievementMapper achievementMapper;
 
+    @Transactional
+    public AchievementDto getByTitle(String title) {
+        return Optional.ofNullable(achievementCache.get(title))
+                .orElseGet(() -> {
+                    Achievement entity = getFromBD(title);
+                    achievementCache.putInCache(entity);
+                    return achievementMapper.toDto(entity);
+                });
+    }
 
     public Achievement getAchievement(String achievementName) {
-       return achievementRepository.findByTitle(achievementName)
-                .orElseThrow(() -> new EntityNotFoundException("No achievement with name " + achievementName + " exists"));
+        return getFromBD(achievementName);
     }
 
     public boolean hasAchievement(long userId, long achievementId) {
@@ -34,13 +49,13 @@ public class AchievementService {
     }
 
     public void createProgressIfNecessary(long userId, long achievementId) {
-       achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
+        achievementProgressRepository.createProgressIfNecessary(userId, achievementId);
         log.info("Created progress for user {} achievement {}", userId, achievementId);
     }
 
     public long getProgress(long userId, long achievementId) {
         AchievementProgress achievementProgress = achievementProgressRepository.findByUserIdAndAchievementId(userId, achievementId)
-                .orElseThrow(()-> new EntityNotFoundException("\n" +
+                .orElseThrow(() -> new EntityNotFoundException("\n" +
                         "Progress for achievements " + achievementId + " and for the user " + userId + " was not found"));
         achievementProgress.increment();
         log.info("Achievement progress for authorId: {} has incremented successfully", userId);
@@ -65,4 +80,8 @@ public class AchievementService {
         log.info("Achievement: {} for authorId: {} publish successfully", achievement, userId);
     }
 
+    private Achievement getFromBD(String title) {
+        return achievementRepository.findByTitle(title)
+                .orElseThrow(() -> new EntityNotFoundException("No achievement with name " + title + " exists"));
+    }
 }

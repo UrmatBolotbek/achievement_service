@@ -19,8 +19,17 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AchievementCacheTest {
@@ -113,6 +122,6 @@ class AchievementCacheTest {
     private void invokeInitCacheMethod() {
         Method initCacheMethod = ReflectionUtils.findMethod(AchievementCache.class, "initCache");
         assertNotNull(initCacheMethod);
-        ReflectionUtils.invokeMethod(initCacheMethod, achievementCache);
+        assertDoesNotThrow(() -> ReflectionUtils.invokeMethod(initCacheMethod, achievementCache));
     }
 }

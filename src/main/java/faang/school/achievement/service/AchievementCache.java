@@ -1,5 +1,6 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.dto.AchievementDto;
 import faang.school.achievement.model.mapper.AchievementMapper;
 import faang.school.achievement.repository.AchievementRepository;
@@ -28,22 +29,24 @@ public class AchievementCache {
     @Async("cashThreadPool")
     public void initCache() {
         log.info("Starting cache initialization");
-        List<AchievementDto> allAchievementDtos = achievementRepository.findAll().stream()
-                .map(achievementMapper::toDto)
-                .toList();
 
-        if (allAchievementDtos.isEmpty()) {
+        List<Achievement> allAchievements = achievementRepository.findAll();
+        if (allAchievements.isEmpty()) {
             log.info("No achievements found in database. Cache is empty.");
-        } else {
-            for (AchievementDto achievementDto : allAchievementDtos) {
-                achievementRedisTemplate.opsForValue().set(buildKey(achievementDto.getTitle()), achievementDto);
-            }
-            log.info("Cache initialization completed. Loaded {} achievements.", allAchievementDtos.size());
+            return;
         }
+
+        allAchievements.forEach(this::putInCache);
+        log.info("Cache initialization completed. Loaded {} achievements.", allAchievements.size());
     }
 
     public AchievementDto get(String title) {
         return achievementRedisTemplate.opsForValue().get(buildKey(title));
+    }
+
+    public void putInCache(Achievement achievement) {
+        AchievementDto dto = achievementMapper.toDto(achievement);
+        achievementRedisTemplate.opsForValue().set(buildKey(dto.getTitle()), dto);
     }
 
     private String buildKey(String title) {
