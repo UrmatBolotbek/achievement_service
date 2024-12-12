@@ -2,6 +2,8 @@ package faang.school.achievement.controller;
 
 import com.redis.testcontainers.RedisContainer;
 import faang.school.achievement.config.context.UserContext;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +13,11 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 @SpringBootTest
 @Testcontainers
@@ -53,5 +60,6 @@ public class AchievementControllerIT {
         achievementController.getAchievementsByUserId();
 
     }
+
 
 }
