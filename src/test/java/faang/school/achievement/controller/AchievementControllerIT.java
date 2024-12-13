@@ -2,8 +2,7 @@ package faang.school.achievement.controller;
 
 import com.redis.testcontainers.RedisContainer;
 import faang.school.achievement.config.context.UserContext;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import faang.school.achievement.dto.AchievementRequestFilterDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +15,6 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 @SpringBootTest
@@ -46,7 +44,6 @@ public class AchievementControllerIT {
 
         registry.add("spring.data.redis.port", () -> REDIS_CONTAINER.getMappedPort(6379));
         registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
-
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -55,11 +52,27 @@ public class AchievementControllerIT {
     }
 
     @Test
+    void testGetAchievements() {
+        AchievementRequestFilterDto achievementDto = new AchievementRequestFilterDto();
+        achievementDto.setTitle("Title");
+        achievementController.getAchievements(achievementDto);
+    }
+
+    @Test
     void testGetAchievementsByUserId() {
         userContext.setUserId(1L);
         achievementController.getAchievementsByUserId();
-
     }
 
+    @Test
+    void testGetAchievementById() {
+        achievementController.getAchievementById(1L);
+    }
+
+    @Test
+    void testGetAchievementsInProgressByUserId() {
+        userContext.setUserId(1L);
+        achievementController.getAchievementsInProgressByUserId();
+    }
 
 }
