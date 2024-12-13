@@ -15,6 +15,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 @SpringBootTest
@@ -44,9 +45,29 @@ public class AchievementControllerIT {
 
         registry.add("spring.data.redis.port", () -> REDIS_CONTAINER.getMappedPort(6379));
         registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
-        try {
+        try (Connection conn = DriverManager.getConnection(
+                POSTGRESQL_CONTAINER.getJdbcUrl(),
+                POSTGRESQL_CONTAINER.getUsername(),
+                POSTGRESQL_CONTAINER.getPassword());
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(
+                    "CREATE TABLE IF NOT EXISTS users (" +
+                            "id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY UNIQUE," +
+                            "username varchar(64) UNIQUE NOT NULL," +
+                            "password varchar(128) NOT NULL," +
+                            "email varchar(64) UNIQUE NOT NULL," +
+                            "phone varchar(32) UNIQUE," +
+                            "about_me varchar(4096)," +
+                            "active boolean DEFAULT true NOT NULL," +
+                            "city varchar(64)," +
+                            "country_id bigint NOT NULL," +
+                            "experience int," +
+                            "created_at timestamptz DEFAULT current_timestamp," +
+                            "updated_at timestamptz DEFAULT current_timestamp" +
+                            ");"
+            );
             Thread.sleep(1000);
-        } catch (InterruptedException e) {
+        } catch (SQLException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
