@@ -31,6 +31,7 @@ server:
 
 achievement:
   nice-guy: NICE_GUY
+  profile-pic: HANDSOME
 
 async:
   pool-size: 10
@@ -44,16 +45,6 @@ logging:
 project-service:
   host: localhost
   port: 8082
-
-
-achievement:
-  profile-pic: HANDSOME
-
-
-async:
-  pool-size: 10
-  max-pool-size: 20
-  keep-alive-time: 10
 
 services:
   user-service:
