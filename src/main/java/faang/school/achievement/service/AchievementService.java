@@ -23,7 +23,6 @@ import java.util.Optional;
 
 import java.util.List;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Service
 @Slf4j
@@ -37,17 +36,16 @@ public class AchievementService {
     private final List<AchievementFilter> filters;
     private final AchievementMapper mapper;
     private final AchievementValidator achievementValidator;
+    private final AchievementCache achievementCache;
 
     public List<AchievementResponseDto> getAchievementsWithFilters(AchievementRequestFilterDto requestFilterDto) {
-        Stream<Achievement> achievements = StreamSupport.stream(achievementRepository.findAll().spliterator(),
-                false).toList().stream();
+        Stream<Achievement> achievements = achievementRepository.findAll().stream().toList().stream();
         filters.stream()
                 .filter(filter -> filter.isApplicable(requestFilterDto))
                 .forEach(filter -> filter.apply(achievements, requestFilterDto));
         log.info("Getting a list of achievement after filtering");
         return mapper.toResponseDtoList(achievements.toList());
     }
-    private final AchievementCache achievementCache;
 
     public List<AchievementResponseDto> getAchievementsByUserId(long userId) {
         List<UserAchievement> achievementsOfUser = userAchievementRepository.findByUserId(userId);
@@ -69,10 +67,6 @@ public class AchievementService {
         log.info("Getting a list of achievement in progress for user id {}", userId);
         return mapper.toResponseDtoList(achievements);
     }
-
-    public Achievement getAchievement(String achievementName) {
-        return achievementRepository.findByTitle(achievementName)
-                .orElseThrow(() -> new EntityNotFoundException("No achievement with name " + achievementName + " exists"));
 
     @Transactional
     public Achievement getByTitle(String title) {

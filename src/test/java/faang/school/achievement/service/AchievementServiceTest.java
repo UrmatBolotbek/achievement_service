@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -63,7 +62,6 @@ public class AchievementServiceTest {
     private AchievementMapperImpl mapper;
     @Mock
     private AchievementValidator achievementValidator;
-
     @Mock
     private AchievementCache achievementCache;
     private Achievement achievement;
@@ -81,7 +79,9 @@ public class AchievementServiceTest {
                 achievementRepository,
                 filters,
                 mapper,
-                achievementValidator);
+                achievementValidator,
+                achievementCache
+                );
         achievement = Achievement.builder()
                 .title("HANDSOME")
                 .id(25L)
@@ -200,10 +200,6 @@ public class AchievementServiceTest {
         when(achievementProgressRepository.findByUserIdAndAchievementId(USER_ID, 25L))
                 .thenReturn(Optional.ofNullable(achievementProgress));
         long result = achievementService.getProgress(USER_ID, 25L);
-        when(achievementProgressRepository.findByUserIdAndAchievementId(19L, 25L))
-                .thenReturn(Optional.of(achievementProgress));
-
-        long result = achievementService.getProgress(19L, 25L);
 
         verify(achievementProgressRepository).save(achievementProgress);
         Assertions.assertEquals(11, result);
