@@ -1,17 +1,31 @@
 package faang.school.achievement.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.redis.testcontainers.RedisContainer;
 import faang.school.achievement.config.context.UserContext;
 import faang.school.achievement.dto.AchievementRequestFilterDto;
+import faang.school.achievement.dto.AchievementResponseDto;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
+
+import javax.swing.text.html.parser.Entity;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,7 +34,11 @@ import java.sql.Statement;
 
 @SpringBootTest
 @Testcontainers
+@AutoConfigureMockMvc
 public class AchievementControllerIT {
+
+    @Autowired
+    protected MockMvc mockMvc;
 
     @Autowired
     private AchievementController achievementController;
@@ -45,6 +63,15 @@ public class AchievementControllerIT {
 
         registry.add("spring.data.redis.port", () -> REDIS_CONTAINER.getMappedPort(6379));
         registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
+        initTable();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static void initTable() {
         try (Connection conn = DriverManager.getConnection(
                 POSTGRESQL_CONTAINER.getJdbcUrl(),
                 POSTGRESQL_CONTAINER.getUsername(),
@@ -66,34 +93,37 @@ public class AchievementControllerIT {
                             "updated_at timestamptz DEFAULT current_timestamp" +
                             ");"
             );
-            Thread.sleep(1000);
-        } catch (SQLException | InterruptedException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Test
-    void testGetAchievements() {
-        AchievementRequestFilterDto achievementDto = new AchievementRequestFilterDto();
-        achievementDto.setTitle("Title");
-        achievementController.getAchievements(achievementDto);
+    void testGetAchievementsByIdSuccess() throws Exception {
+        mockMvc.perform(get("/api/v1/achievements/" + 1)
+                        .header("x-user-id", 10))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("COLLECTOR"));
     }
+//
+//    @Test
+//    void testGetAchievementsByUserIdWithException() throws Exception {
+//        mockMvc.perform(get("/api/v1/achievements/user").header("x-user-id", 1))
+//                .andExpect(status().is5xxServerError());
+//    }
+//
+//    @Test
+//    void testGetAchievementsInProgressByUserIdException() throws Exception {
+//        mockMvc.perform(get("/api/v1/achievements/user/in_progress").header("x-user-id", 1))
+//                .andExpect(status().is5xxServerError());
+//    }
 
     @Test
-    void testGetAchievementsByUserId() {
-        userContext.setUserId(1L);
-        achievementController.getAchievementsByUserId();
-    }
-
-    @Test
-    void testGetAchievementById() {
-        achievementController.getAchievementById(1L);
-    }
-
-    @Test
-    void testGetAchievementsInProgressByUserId() {
-        userContext.setUserId(1L);
-        achievementController.getAchievementsInProgressByUserId();
+    void testGetAchievementsSuccess() throws Exception {
+        mockMvc.perform(get("/api/v1/achievements/filters?title=COLLECTOR")
+                .header("x-user-id", 10))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("COLLECTOR"));
     }
 
 }

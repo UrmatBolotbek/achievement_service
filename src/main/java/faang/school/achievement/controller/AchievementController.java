@@ -31,7 +31,7 @@ public class AchievementController {
         return achievementService.getAchievementsByUserId(userContext.getUserId());
     }
 
-    @GetMapping("/{achievementId}/achievement")
+    @GetMapping("/{achievementId}")
     public AchievementResponseDto getAchievementById(@PathVariable long achievementId) {
         return achievementService.getAchievementById(achievementId);
     }

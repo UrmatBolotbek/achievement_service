@@ -1,8 +1,8 @@
 package faang.school.achievement.validator;
 
-import faang.school.achievement.client.UserServiceClient;
-import faang.school.achievement.dto.UserDto;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
+import faang.school.achievement.model.UserAchievement;
 import faang.school.achievement.repository.AchievementRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,21 +26,34 @@ public class AchievementValidatorTest {
 
     @InjectMocks
     private AchievementValidator achievementValidator;
-    @Mock
-    private UserServiceClient userServiceClient;
+
     @Mock
     private AchievementRepository achievementRepository;
 
     @Test
-    void testUserValidationWithException() {
-        when(userServiceClient.getUser(USER_ID)).thenReturn(null);
-        assertThrows(EntityNotFoundException.class, ()-> achievementValidator.userValidation(USER_ID));
+    void testValidateListAchievementByUserWithException() {
+        List<UserAchievement> userAchievements = new ArrayList<>();
+        assertThrows(EntityNotFoundException.class, ()-> achievementValidator
+                .validateListAchievementByUser(userAchievements, USER_ID));
     }
 
     @Test
-    void testUserValidationSuccess() {
-        when(userServiceClient.getUser(USER_ID)).thenReturn(new UserDto());
-        assertDoesNotThrow(()-> achievementValidator.userValidation(USER_ID));
+    void testValidateListAchievementByUserSuccess() {
+        List<UserAchievement> userAchievements = List.of(new UserAchievement());
+        assertDoesNotThrow(()-> achievementValidator.validateListAchievementByUser(userAchievements, USER_ID));
+    }
+
+    @Test
+    void testValidateListAchievementInProgressByUserWithException() {
+        List<AchievementProgress> userAchievements = new ArrayList<>();
+        assertThrows(EntityNotFoundException.class, ()-> achievementValidator
+                .validateListAchievementInProgressByUser(userAchievements, USER_ID));
+    }
+
+    @Test
+    void testValidateListAchievementInProgressByUserSuccess() {
+        List<AchievementProgress> userAchievements = List.of(new AchievementProgress());
+        assertDoesNotThrow(()-> achievementValidator.validateListAchievementInProgressByUser(userAchievements, USER_ID));
     }
 
     @Test

@@ -46,8 +46,8 @@ public class AchievementService {
     }
 
     public List<AchievementResponseDto> getAchievementsByUserId(long userId) {
-        achievementValidator.userValidation(userId);
         List<UserAchievement> achievementsOfUser = userAchievementRepository.findByUserId(userId);
+        achievementValidator.validateListAchievementByUser(achievementsOfUser, userId);
         List<Achievement> achievements = achievementsOfUser.stream().map(UserAchievement::getAchievement).toList();
         log.info("Getting a list of achievement for user id {}", userId);
         return mapper.toResponseDtoList(achievements);
@@ -59,8 +59,8 @@ public class AchievementService {
     }
 
     public List<AchievementResponseDto> getAchievementsInProgressByUserId(long userId) {
-        achievementValidator.userValidation(userId);
         List<AchievementProgress> achievementProgresses = achievementProgressRepository.findByUserId(userId);
+        achievementValidator.validateListAchievementInProgressByUser(achievementProgresses, userId);
         List<Achievement> achievements = achievementProgresses.stream().map(AchievementProgress::getAchievement).toList();
         log.info("Getting a list of achievement in progress for user id {}", userId);
         return mapper.toResponseDtoList(achievements);
