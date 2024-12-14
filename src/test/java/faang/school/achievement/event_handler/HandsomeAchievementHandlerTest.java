@@ -29,12 +29,12 @@ public class HandsomeAchievementHandlerTest {
                 .title("HANDSOME")
                 .id(25L)
                 .points(10L)
-                .build();;
+                .build();
     }
 
     @Test
     void testHandleSuccess() {
-        when(service.getAchievement("HANDSOME")).thenReturn(achievement);
+        when(service.getByTitle("HANDSOME")).thenReturn(achievement);
         when(service.hasAchievement(19L,25L)).thenReturn(false);
         when(service.getProgress(19L,25L)).thenReturn(11L);
 

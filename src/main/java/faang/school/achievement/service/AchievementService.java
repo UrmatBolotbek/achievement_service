@@ -17,6 +17,9 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -44,6 +47,7 @@ public class AchievementService {
         log.info("Getting a list of achievement after filtering");
         return mapper.toResponseDtoList(achievements.toList());
     }
+    private final AchievementCache achievementCache;
 
     public List<AchievementResponseDto> getAchievementsByUserId(long userId) {
         List<UserAchievement> achievementsOfUser = userAchievementRepository.findByUserId(userId);
@@ -69,6 +73,15 @@ public class AchievementService {
     public Achievement getAchievement(String achievementName) {
         return achievementRepository.findByTitle(achievementName)
                 .orElseThrow(() -> new EntityNotFoundException("No achievement with name " + achievementName + " exists"));
+
+    @Transactional
+    public Achievement getByTitle(String title) {
+        return Optional.ofNullable(achievementCache.get(title))
+                .orElseGet(() -> {
+                    Achievement entity = getByTitleFromBD(title);
+                    achievementCache.putInCache(entity);
+                    return entity;
+                });
     }
 
     public boolean hasAchievement(long userId, long achievementId) {
@@ -107,4 +120,8 @@ public class AchievementService {
         log.info("Achievement: {} for authorId: {} publish successfully", achievement, userId);
     }
 
+    private Achievement getByTitleFromBD(String title) {
+        return achievementRepository.findByTitle(title)
+                .orElseThrow(() -> new EntityNotFoundException("No achievement with name " + title + " exists"));
+    }
 }

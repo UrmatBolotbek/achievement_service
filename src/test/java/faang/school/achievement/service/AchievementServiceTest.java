@@ -31,8 +31,13 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 public class AchievementServiceTest {
@@ -59,6 +64,8 @@ public class AchievementServiceTest {
     @Mock
     private AchievementValidator achievementValidator;
 
+    @Mock
+    private AchievementCache achievementCache;
     private Achievement achievement;
     private AchievementProgress achievementProgress;
     private List<AchievementFilter> filters;
@@ -136,15 +143,44 @@ public class AchievementServiceTest {
     }
 
     @Test
+    void testGetByTitleFoundInCache() {
+        when(achievementCache.get("HANDSOME")).thenReturn(achievement);
+
+        Achievement result = achievementService.getByTitle("HANDSOME");
+        Assertions.assertEquals(achievement, result);
+        verifyNoInteractions(achievementRepository);
+        verify(achievementCache, never()).putInCache(any(Achievement.class));
+    }
+
+    @Test
+    void testGetByTitleNotInCacheButInDB() {
+        when(achievementCache.get("HANDSOME")).thenReturn(null);
+        when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
+
+        Achievement result = achievementService.getByTitle("HANDSOME");
+        Assertions.assertEquals(achievement, result);
+        verify(achievementCache).putInCache(achievement);
+    }
+
+    @Test
+    void testGetByTitleNotFoundAnywhere() {
+        when(achievementCache.get("HANDSOME")).thenReturn(null);
+        when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> achievementService.getByTitle("HANDSOME"));
+        verify(achievementCache, never()).putInCache(any(Achievement.class));
+    }
+
+    @Test
     void testGetAchievementSuccess() {
-        when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.ofNullable(achievement));
-        assertDoesNotThrow(()-> achievementService.getAchievement("HANDSOME"));
+        when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
+        assertDoesNotThrow(() -> achievementService.getByTitle("HANDSOME"));
     }
 
     @Test
     void testGetAchievementFailure() {
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, ()-> achievementService.getAchievement("HANDSOME"));
+        assertThrows(EntityNotFoundException.class, () -> achievementService.getByTitle("HANDSOME"));
     }
 
     @Test
@@ -156,6 +192,7 @@ public class AchievementServiceTest {
     @Test
     void testCreateProgressIfNecessary() {
         assertDoesNotThrow(()->  achievementService.createProgressIfNecessary(USER_ID, 25L));
+        assertDoesNotThrow(() -> achievementService.createProgressIfNecessary(19L, 25L));
     }
 
     @Test
@@ -163,6 +200,11 @@ public class AchievementServiceTest {
         when(achievementProgressRepository.findByUserIdAndAchievementId(USER_ID, 25L))
                 .thenReturn(Optional.ofNullable(achievementProgress));
         long result = achievementService.getProgress(USER_ID, 25L);
+        when(achievementProgressRepository.findByUserIdAndAchievementId(19L, 25L))
+                .thenReturn(Optional.of(achievementProgress));
+
+        long result = achievementService.getProgress(19L, 25L);
+
         verify(achievementProgressRepository).save(achievementProgress);
         Assertions.assertEquals(11, result);
     }
@@ -172,6 +214,14 @@ public class AchievementServiceTest {
         achievementService.giveAchievement(USER_ID, achievement);
         verify(userAchievementRepository).save(userAchievementCaptor.capture());
         verify(eventPublisher).publish(publishEventCaptor.capture());
-    }
 
+        UserAchievement saved = userAchievementCaptor.getValue();
+        Assertions.assertEquals(19L, saved.getUserId());
+        Assertions.assertEquals(achievement, saved.getAchievement());
+
+        PublishEvent published = publishEventCaptor.getValue();
+        Assertions.assertEquals(19L, published.getUserId());
+        Assertions.assertEquals(25L, published.getAchievementId());
+        Assertions.assertEquals("HANDSOME", published.getAchievementName());
+    }
 }
