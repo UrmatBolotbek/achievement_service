@@ -29,15 +29,6 @@ spring:
 
 server:
   port: 8085
-
-achievement:
-  nice-guy: NICE_GUY
-
-async:
-  pool-size: 10
-  max-pool-size: 20
-  keep-alive-time: 10
-
 logging:
   level:
     root: info
@@ -46,10 +37,9 @@ project-service:
   host: localhost
   port: 8082
 
-
 achievement:
   profile-pic: HANDSOME
-
+  nice-guy: NICE_GUY
 
 async:
   pool-size: 10
