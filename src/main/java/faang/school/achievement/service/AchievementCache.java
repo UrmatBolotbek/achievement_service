@@ -2,6 +2,7 @@ package faang.school.achievement.service;
 
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.repository.AchievementRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -24,6 +25,7 @@ public class AchievementCache {
 
     @EventListener(ApplicationReadyEvent.class)
     @Async("fixedThreadPool")
+    @Transactional
     public void initCache() {
         log.info("Starting cache initialization");
 

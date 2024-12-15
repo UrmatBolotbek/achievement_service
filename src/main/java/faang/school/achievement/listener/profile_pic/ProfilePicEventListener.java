@@ -17,18 +17,18 @@ public class ProfilePicEventListener extends AbstractEventListener<ProfilePicEve
     @Value("${spring.data.redis.channels.profile-pic-channel}")
     private String topicProfilePic;
 
-    private final EventHandler<ProfilePicEvent> profilePicEventEventHandler;
+    private final EventHandler<ProfilePicEvent> handsomeAchievementHandler;
 
     public ProfilePicEventListener(ObjectMapper objectMapper,
                                    RedisMessageListenerContainer container,
-                                   EventHandler<ProfilePicEvent> profilePicEventEventHandler) {
+                                   EventHandler<ProfilePicEvent> handsomeAchievementHandler) {
         super(objectMapper,container);
-        this.profilePicEventEventHandler = profilePicEventEventHandler;
+        this.handsomeAchievementHandler = handsomeAchievementHandler;
     }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        handleEvent(message, ProfilePicEvent.class, profilePicEventEventHandler::handle);
+        handleEvent(message, ProfilePicEvent.class, handsomeAchievementHandler::handle);
     }
 
     @Override

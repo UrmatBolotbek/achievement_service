@@ -2,6 +2,7 @@ package faang.school.achievement.event_handler;
 
 import faang.school.achievement.event.RecommendationEvent;
 import faang.school.achievement.service.AchievementService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ public class NiceGuyAchievementHandler extends AbstractAchievementHandler<Recomm
 
     @Override
     @Async("fixedThreadPool")
+    @Transactional
     public void handle(RecommendationEvent event) {
         handleAchievement(event.getAuthorId(), niceGuy);
     }
