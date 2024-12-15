@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name="achievement")
-public class Achievement {
+public class Achievement implements Serializable {
 
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
@@ -33,11 +34,11 @@ public class Achievement {
     @Enumerated(EnumType.ORDINAL)
     private Rarity rarity;
 
-    @OneToMany(mappedBy = "achievement")
-    private List<UserAchievement> userAchievements;
+  // @OneToMany(mappedBy = "achievement")
+  // private List<UserAchievement> userAchievements;
 
-    @OneToMany(mappedBy = "achievement")
-    private List<AchievementProgress> progresses;
+  // @OneToMany(mappedBy = "achievement")
+  // private List<AchievementProgress> progresses;
 
     @Column(name = "points", nullable = false)
     private long points;

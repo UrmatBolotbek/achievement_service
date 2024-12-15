@@ -3,27 +3,32 @@ package faang.school.achievement.listener.subscription;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import faang.school.achievement.event.FollowerEvent;
 import faang.school.achievement.handler.EventHandler;
-import lombok.RequiredArgsConstructor;
+import faang.school.achievement.listener.AbstractEventListener;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
-public class FollowerEventListener implements MessageListener {
-    private final ObjectMapper objectMapper;
-    private final List<EventHandler<FollowerEvent>> handlers;
+public class FollowerEventListener extends AbstractEventListener<FollowerEvent> {
+    @Value("${spring.data.redis.channels.follower}")
+    private String topicFollower;
+
+    public FollowerEventListener(List<EventHandler<FollowerEvent>> eventHandlers,
+                                 RedisMessageListenerContainer container,
+                                 ObjectMapper objectMapper) {
+        super(eventHandlers, container, objectMapper);
+    }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        try {
-            FollowerEvent followerEvent =  objectMapper.readValue(message.getBody(), FollowerEvent.class);
-            handlers.forEach(handler -> handler.handle(followerEvent));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        handleEvent(message, FollowerEvent.class);
+    }
+
+    @Override
+    protected String getTopicName() {
+        return topicFollower;
     }
 }

@@ -1,5 +1,7 @@
 package faang.school.achievement.event_handler;
 
+import faang.school.achievement.event.ProfilePicEvent;
+import faang.school.achievement.handler.profile_pic.HandsomeAchievementHandler;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.service.AchievementService;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,11 +36,13 @@ public class HandsomeAchievementHandlerTest {
 
     @Test
     void testHandleSuccess() {
-        when(service.getByTitle("HANDSOME")).thenReturn(achievement);
-        when(service.hasAchievement(19L,25L)).thenReturn(false);
-        when(service.getProgress(19L,25L)).thenReturn(11L);
+        ProfilePicEvent profilePicEvent = new ProfilePicEvent(19L, "https:pic");
 
-        assertDoesNotThrow(()-> handler.handleAchievement(19L, "HANDSOME"));
+        when(service.getAchievement("HANDSOME")).thenReturn(achievement);
+        when(service.hasAchievement(19L,25L)).thenReturn(false);
+        when(service.getCurrentPointsOfProgress(19L,25L)).thenReturn(11L);
+
+        assertDoesNotThrow(()-> handler.handle(profilePicEvent));
 
         verify(service).createProgressIfNecessary(19L,25L);
         verify(service).giveAchievement(19L, achievement);
