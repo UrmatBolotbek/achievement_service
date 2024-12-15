@@ -21,9 +21,9 @@ public class ProfilePicEventListener extends AbstractEventListener<ProfilePicEve
 
     public ProfilePicEventListener(ObjectMapper objectMapper,
                                    RedisMessageListenerContainer container,
-                                   EventHandler<ProfilePicEvent> profilePicEventEventHandler) {
+                                   EventHandler<ProfilePicEvent> handsomeAchievementHandler) {
         super(objectMapper,container);
-        this.profilePicEventEventHandler = profilePicEventEventHandler;
+        this.profilePicEventEventHandler = handsomeAchievementHandler;
     }
 
     @Override
