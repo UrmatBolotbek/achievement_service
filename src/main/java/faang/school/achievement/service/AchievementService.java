@@ -26,7 +26,7 @@ public class AchievementService {
 
     @Cacheable(value = "achievement")
     public Achievement getAchievement(String title) {
-        return achievementRepository.findByTitle(title).orElseThrow();
+        return achievementRepository.findByTitle(title).orElseThrow(() -> new IllegalArgumentException("Achievement not found"));
     }
 
     public boolean hasAchievement(long userId, long achievementId) {

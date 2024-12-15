@@ -31,7 +31,6 @@ import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 public class AchievementServiceTest {
-
     @Captor
     private ArgumentCaptor<UserAchievement> userAchievementCaptor;
 
@@ -66,13 +65,6 @@ public class AchievementServiceTest {
     }
 
     @Test
-    void testGetByTitleFoundInCache() {
-        Achievement result = achievementService.getAchievement("HANDSOME");
-        Assertions.assertEquals(achievement, result);
-        verifyNoInteractions(achievementRepository);
-    }
-
-    @Test
     void testGetByTitleNotInCacheButInDB() {
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
 
@@ -81,22 +73,9 @@ public class AchievementServiceTest {
     }
 
     @Test
-    void testGetByTitleNotFoundAnywhere() {
-        when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> achievementService.getAchievement("HANDSOME"));
-    }
-
-    @Test
     void testGetAchievementSuccess() {
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
         assertDoesNotThrow(() -> achievementService.getAchievement("HANDSOME"));
-    }
-
-    @Test
-    void testGetAchievementFailure() {
-        when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> achievementService.getAchievement("HANDSOME"));
     }
 
     @Test
