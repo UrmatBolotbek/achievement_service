@@ -28,7 +28,3 @@ jobs:
 
       - name: Run tests
         run: ./gradlew test
-
-      - name: Shutdown Docker Compose services
-        if: always()
-        run: docker-compose -f docker/docker-compose.yml down
