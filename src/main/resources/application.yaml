@@ -26,6 +26,7 @@ spring:
         profile-pic-channel: profile-pic-channel
         recommendation-channel: recommendation-given
         comment-channel: comment-topic
+        follower-event-channel: follower-channel
 
 server:
   port: 8085
@@ -34,7 +35,7 @@ achievement:
   nice-guy: NICE GUY
   angry-commenter: ANGRY COMMENTER
   profile-pic: HANDSOME
-
+  blogger: BLOGGER
 
 async:
   pool-size: 10
@@ -48,3 +49,13 @@ logging:
 project-service:
   host: localhost
   port: 8082
+
+
+achievement:
+  profile-pic: HANDSOME
+
+
+async:
+  pool-size: 10
+  max-pool-size: 20
+  keep-alive-time: 10
