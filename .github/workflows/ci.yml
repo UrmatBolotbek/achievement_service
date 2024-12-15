@@ -40,7 +40,7 @@ jobs:
         uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
       - name: Start services using Docker Compose
-        run: docker-compose up -d
+        run: docker-compose -f docker/docker-compose.yaml up -d
 
       - name: Check services health
         run: |
@@ -55,4 +55,4 @@ jobs:
 
       - name: Shutdown Docker Compose services
         if: always()
-        run: docker-compose down
+        run: docker-compose -f docker/docker-compose.yaml down
