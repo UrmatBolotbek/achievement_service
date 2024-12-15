@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name="achievement")
+@Table(name = "achievement")
 public class Achievement implements Serializable {
 
     @Id
@@ -34,11 +34,11 @@ public class Achievement implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private Rarity rarity;
 
-  // @OneToMany(mappedBy = "achievement")
-  // private List<UserAchievement> userAchievements;
+    @OneToMany(mappedBy = "achievement")
+    private List<UserAchievement> userAchievements;
 
-  // @OneToMany(mappedBy = "achievement")
-  // private List<AchievementProgress> progresses;
+    @OneToMany(mappedBy = "achievement")
+    private List<AchievementProgress> progresses;
 
     @Column(name = "points", nullable = false)
     private long points;
