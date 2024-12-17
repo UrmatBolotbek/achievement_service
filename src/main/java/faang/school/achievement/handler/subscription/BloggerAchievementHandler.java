@@ -17,6 +17,6 @@ public class BloggerAchievementHandler extends AbstractAchievementHandler<Follow
     @Override
     @Async("fixedThreadPool")
     public void handle(FollowerEvent event) {
-        handleAchievement(event.getFolloweeId(), AchievementTitle.BLOGGER.name());
+        handleAchievement(event.getFolloweeId(), AchievementTitle.BLOGGER);
     }
 }

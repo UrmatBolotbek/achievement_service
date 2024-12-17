@@ -17,6 +17,6 @@ public class CelebrityAchievementHandler extends AbstractAchievementHandler<Foll
     @Override
     @Async("fixedThreadPool")
     public void handle(FollowerEvent event) {
-        handleAchievement(event.getFolloweeId(), AchievementTitle.CELEBRITY.name());
+        handleAchievement(event.getFolloweeId(), AchievementTitle.CELEBRITY);
     }
 }

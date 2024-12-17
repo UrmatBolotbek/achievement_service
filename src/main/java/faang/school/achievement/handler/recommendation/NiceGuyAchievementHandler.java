@@ -17,6 +17,6 @@ public class NiceGuyAchievementHandler extends AbstractAchievementHandler<Recomm
     @Override
     @Async("fixedThreadPool")
     public void handle(RecommendationEvent event) {
-        handleAchievement(event.getAuthorId(), AchievementTitle.NICE_GUY.name());
+        handleAchievement(event.getAuthorId(), AchievementTitle.NICE_GUY);
     }
 }
