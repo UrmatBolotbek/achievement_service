@@ -25,10 +25,15 @@ spring:
         achievement-channel: achievement-channel
         profile-pic-channel: profile-pic-channel
         recommendation-channel: recommendation-given
-        follower: follower-channel
+        follower-event-channel: follower-channel
 
 server:
   port: 8085
+
+achievement:
+  nice-guy: NICE_GUY
+  profile-pic: HANDSOME
+  blogger: BLOGGER
 
 async:
   pool-size: 10
