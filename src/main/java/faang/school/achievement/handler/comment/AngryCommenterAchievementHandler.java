@@ -1,6 +1,7 @@
-package faang.school.achievement.event_handler;
+package faang.school.achievement.handler.comment;
 
 import faang.school.achievement.event.CommentEvent;
+import faang.school.achievement.handler.AbstractAchievementHandler;
 import faang.school.achievement.service.AchievementService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;

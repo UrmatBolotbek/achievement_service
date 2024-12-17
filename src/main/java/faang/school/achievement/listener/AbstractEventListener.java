@@ -1,7 +1,6 @@
 package faang.school.achievement.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.handler.EventHandler;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,14 +10,15 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 @Slf4j
 public abstract class AbstractEventListener<T> implements MessageListener {
-    private final List<EventHandler<T>> handlers;
-    private final RedisMessageListenerContainer container;
+
     private final ObjectMapper objectMapper;
+    private final RedisMessageListenerContainer container;
+
 
     @PostConstruct
     public void init() {
@@ -27,10 +27,10 @@ public abstract class AbstractEventListener<T> implements MessageListener {
 
     }
 
-    protected void handleEvent(Message message, Class<T> clazz) {
+    protected void handleEvent(Message message, Class<T> clazz, Consumer<T> consumer) {
         try {
             T event = objectMapper.readValue(message.getBody(), clazz);
-            handlers.forEach(handler -> handler.handle(event));
+            consumer.accept(event);
         } catch (IOException e) {
             log.error("Error deserializing JSON to object", e);
             throw new RuntimeException("Error deserializing JSON to object", e);

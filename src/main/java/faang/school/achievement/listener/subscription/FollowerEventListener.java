@@ -13,18 +13,25 @@ import java.util.List;
 
 @Component
 public class FollowerEventListener extends AbstractEventListener<FollowerEvent> {
+
+    private final List<EventHandler<FollowerEvent>> handlers;
     @Value("${spring.data.redis.channels.follower-event-channel}")
     private String topicFollower;
 
-    public FollowerEventListener(List<EventHandler<FollowerEvent>> eventHandlers,
+    public FollowerEventListener(ObjectMapper objectMapper,
                                  RedisMessageListenerContainer container,
-                                 ObjectMapper objectMapper) {
-        super(eventHandlers, container, objectMapper);
+                                 List<EventHandler<FollowerEvent>> handlers) {
+        super(objectMapper, container);
+        this.handlers = handlers;
     }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        handleEvent(message, FollowerEvent.class);
+        handleEvent(message, FollowerEvent.class, event -> {
+            for (EventHandler<FollowerEvent> handler : handlers) {
+                handler.handle(event);
+            }
+        });
     }
 
     @Override

@@ -36,6 +36,7 @@ achievement:
   angry-commenter: ANGRY COMMENTER
   profile-pic: HANDSOME
   blogger: BLOGGER
+  celebrity: CELEBRITY
 
 async:
   pool-size: 10

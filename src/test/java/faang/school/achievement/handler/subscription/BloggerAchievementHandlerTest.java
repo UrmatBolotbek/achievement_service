@@ -1,9 +1,6 @@
-package faang.school.achievement.event_handler;
+package faang.school.achievement.handler.subscription;
 
-import faang.school.achievement.event.FollowerEvent;
-import faang.school.achievement.handler.subscription.BloggerAchievementHandler;
 import faang.school.achievement.model.Achievement;
-import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,16 +34,11 @@ class BloggerAchievementHandlerTest {
 
     @Test
     void testHandleSuccess() {
-        FollowerEvent followerEvent = new FollowerEvent();
-        followerEvent.setFolloweeId(1L);
-        AchievementProgress achievementProgress = new AchievementProgress();
-        achievementProgress.setCurrentPoints(500L);
-
-        when(service.getByTitle("BLOGGER")).thenReturn(achievement);
+        when(service.getAchievement("BLOGGER")).thenReturn(achievement);
         when(service.hasAchievement(1L, 3L)).thenReturn(false);
-        when(service.getProgress(1L, 3L)).thenReturn(achievementProgress);
+        when(service.getProgress(1L, 3L)).thenReturn(501L);
 
-        assertDoesNotThrow(() -> handler.handle(followerEvent));
+        assertDoesNotThrow(() -> handler.handleAchievement(1L, "BLOGGER"));
 
         verify(service).createProgressIfNecessary(1L, 3L);
         verify(service).giveAchievement(1L, achievement);
