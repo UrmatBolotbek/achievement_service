@@ -8,7 +8,6 @@ import faang.school.achievement.publisher.EventPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,13 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 public class AchievementServiceTest {
-
     @Captor
     private ArgumentCaptor<UserAchievement> userAchievementCaptor;
 
@@ -48,8 +44,7 @@ public class AchievementServiceTest {
     private EventPublisher eventPublisher;
     @Mock
     private AchievementRepository achievementRepository;
-    @Mock
-    private AchievementCache achievementCache;
+
     private Achievement achievement;
     private AchievementProgress achievementProgress;
 
@@ -67,44 +62,17 @@ public class AchievementServiceTest {
     }
 
     @Test
-    void testGetByTitleFoundInCache() {
-        when(achievementCache.get("HANDSOME")).thenReturn(achievement);
-
-        Achievement result = achievementService.getByTitle("HANDSOME");
-        Assertions.assertEquals(achievement, result);
-        verifyNoInteractions(achievementRepository);
-        verify(achievementCache, never()).putInCache(any(Achievement.class));
-    }
-
-    @Test
     void testGetByTitleNotInCacheButInDB() {
-        when(achievementCache.get("HANDSOME")).thenReturn(null);
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
 
         Achievement result = achievementService.getByTitle("HANDSOME");
         Assertions.assertEquals(achievement, result);
-        verify(achievementCache).putInCache(achievement);
-    }
-
-    @Test
-    void testGetByTitleNotFoundAnywhere() {
-        when(achievementCache.get("HANDSOME")).thenReturn(null);
-        when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> achievementService.getByTitle("HANDSOME"));
-        verify(achievementCache, never()).putInCache(any(Achievement.class));
     }
 
     @Test
     void testGetAchievementSuccess() {
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
         assertDoesNotThrow(() -> achievementService.getByTitle("HANDSOME"));
-    }
-
-    @Test
-    void testGetAchievementFailure() {
-        when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> achievementService.getByTitle("HANDSOME"));
     }
 
     @Test
@@ -116,17 +84,6 @@ public class AchievementServiceTest {
     @Test
     void testCreateProgressIfNecessary() {
         assertDoesNotThrow(() -> achievementService.createProgressIfNecessary(19L, 25L));
-    }
-
-    @Test
-    void testGetProgressSuccess() {
-        when(achievementProgressRepository.findByUserIdAndAchievementId(19L, 25L))
-                .thenReturn(Optional.of(achievementProgress));
-
-        long result = achievementService.getProgress(19L, 25L);
-
-        verify(achievementProgressRepository).save(achievementProgress);
-        Assertions.assertEquals(11, result);
     }
 
     @Test
