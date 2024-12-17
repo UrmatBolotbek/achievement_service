@@ -6,7 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class PublishEvent {
-
     private long userId;
     private long achievementId;
     private String achievementName;
