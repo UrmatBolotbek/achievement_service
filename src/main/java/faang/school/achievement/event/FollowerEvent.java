@@ -14,5 +14,5 @@ import java.time.LocalDateTime;
 public class FollowerEvent {
     private long followeeId;
     private long followerId;
-    private LocalDateTime timeStamp;
+    private LocalDateTime receivedAt;
 }
