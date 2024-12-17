@@ -1,5 +1,5 @@
 package faang.school.achievement.util;
 
-public enum Achievement {
+public enum AchievementTitle {
     NICE_GUY, HANDSOME, CELEBRITY, BLOGGER
 }
