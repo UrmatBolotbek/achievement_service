@@ -3,12 +3,13 @@ package faang.school.achievement.handler.subscription;
 import faang.school.achievement.event.FollowerEvent;
 import faang.school.achievement.handler.AbstractAchievementHandler;
 import faang.school.achievement.service.AchievementService;
+import faang.school.achievement.util.Achievement;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CelebrityAchievementHandler extends AbstractAchievementHandler<FollowerEvent> {
-    private static final String ACHIEVEMENT_TITLE = "CELEBRITY";
 
     public CelebrityAchievementHandler(AchievementService achievementService) {
         super(achievementService);
@@ -17,6 +18,6 @@ public class CelebrityAchievementHandler extends AbstractAchievementHandler<Foll
     @Override
     @Async("fixedThreadPool")
     public void handle(FollowerEvent event) {
-        handleAchievement(event.getFolloweeId(), ACHIEVEMENT_TITLE);
+        handleAchievement(event.getFolloweeId(), Achievement.CELEBRITY.name());
     }
 }

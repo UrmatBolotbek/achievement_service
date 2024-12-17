@@ -38,7 +38,7 @@ public class NiceGuyAchievementHandlerTest {
     void testHandleSuccess() {
         RecommendationEvent recommendationEvent = new RecommendationEvent(1L, 10L, "content");
 
-        when(service.getAchievement("NICE_GUY")).thenReturn(achievement);
+        when(service.getByTitle("NICE_GUY")).thenReturn(achievement);
         when(service.hasAchievement(1L,9L)).thenReturn(false);
         when(service.getCurrentPointsOfProgress(1L,9L)).thenReturn(5L);
 

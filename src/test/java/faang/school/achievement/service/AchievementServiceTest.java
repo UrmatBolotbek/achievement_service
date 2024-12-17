@@ -4,11 +4,10 @@ import faang.school.achievement.event.PublishEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
-import faang.school.achievement.publisher.AchievementPublisher;
+import faang.school.achievement.publisher.EventPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,9 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
 public class AchievementServiceTest {
@@ -44,7 +41,7 @@ public class AchievementServiceTest {
     @Mock
     private AchievementProgressRepository achievementProgressRepository;
     @Mock
-    private AchievementPublisher achievementPublisher;
+    private EventPublisher eventPublisher;
     @Mock
     private AchievementRepository achievementRepository;
 
@@ -68,14 +65,14 @@ public class AchievementServiceTest {
     void testGetByTitleNotInCacheButInDB() {
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
 
-        Achievement result = achievementService.getAchievement("HANDSOME");
+        Achievement result = achievementService.getByTitle("HANDSOME");
         Assertions.assertEquals(achievement, result);
     }
 
     @Test
     void testGetAchievementSuccess() {
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
-        assertDoesNotThrow(() -> achievementService.getAchievement("HANDSOME"));
+        assertDoesNotThrow(() -> achievementService.getByTitle("HANDSOME"));
     }
 
     @Test
@@ -104,7 +101,7 @@ public class AchievementServiceTest {
     void testGiveAchievementSuccess() {
         achievementService.giveAchievement(19L, achievement);
         verify(userAchievementRepository).save(userAchievementCaptor.capture());
-        verify(achievementPublisher).publish(publishEventCaptor.capture());
+        verify(eventPublisher).publish(publishEventCaptor.capture());
 
         UserAchievement saved = userAchievementCaptor.getValue();
         Assertions.assertEquals(19L, saved.getUserId());

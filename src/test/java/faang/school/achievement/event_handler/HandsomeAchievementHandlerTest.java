@@ -38,7 +38,7 @@ public class HandsomeAchievementHandlerTest {
     void testHandleSuccess() {
         ProfilePicEvent profilePicEvent = new ProfilePicEvent(19L, "https:pic");
 
-        when(service.getAchievement("HANDSOME")).thenReturn(achievement);
+        when(service.getByTitle("HANDSOME")).thenReturn(achievement);
         when(service.hasAchievement(19L,25L)).thenReturn(false);
         when(service.getCurrentPointsOfProgress(19L,25L)).thenReturn(11L);
 
