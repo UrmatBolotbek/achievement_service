@@ -4,7 +4,6 @@ import faang.school.achievement.event.FollowerEvent;
 import faang.school.achievement.handler.AbstractAchievementHandler;
 import faang.school.achievement.service.AchievementService;
 import faang.school.achievement.util.Achievement;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 

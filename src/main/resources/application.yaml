@@ -30,11 +30,6 @@ spring:
 server:
   port: 8085
 
-achievement:
-  nice-guy: NICE_GUY
-  profile-pic: HANDSOME
-  blogger: BLOGGER
-
 async:
   pool-size: 10
   max-pool-size: 20

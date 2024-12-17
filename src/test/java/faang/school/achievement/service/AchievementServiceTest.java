@@ -87,17 +87,6 @@ public class AchievementServiceTest {
     }
 
     @Test
-    void testGetProgressSuccess() {
-        when(achievementProgressRepository.findByUserIdAndAchievementId(19L, 25L))
-                .thenReturn(Optional.of(achievementProgress));
-
-        long result = achievementService.getCurrentPointsOfProgress(19L, 25L);
-
-        verify(achievementProgressRepository).save(achievementProgress);
-        Assertions.assertEquals(11, result);
-    }
-
-    @Test
     void testGiveAchievementSuccess() {
         achievementService.giveAchievement(19L, achievement);
         verify(userAchievementRepository).save(userAchievementCaptor.capture());

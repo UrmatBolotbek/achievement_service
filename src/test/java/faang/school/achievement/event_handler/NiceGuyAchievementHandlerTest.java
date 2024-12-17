@@ -3,6 +3,7 @@ package faang.school.achievement.event_handler;
 import faang.school.achievement.event.RecommendationEvent;
 import faang.school.achievement.handler.recommendation.NiceGuyAchievementHandler;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,9 +39,12 @@ public class NiceGuyAchievementHandlerTest {
     void testHandleSuccess() {
         RecommendationEvent recommendationEvent = new RecommendationEvent(1L, 10L, "content");
 
+        AchievementProgress achievementProgress = new AchievementProgress();
+        achievementProgress.setCurrentPoints(5L);
+
         when(service.getByTitle("NICE_GUY")).thenReturn(achievement);
         when(service.hasAchievement(1L,9L)).thenReturn(false);
-        when(service.getCurrentPointsOfProgress(1L,9L)).thenReturn(5L);
+        when(service.getProgress(1L,9L)).thenReturn(achievementProgress);
 
         assertDoesNotThrow(()-> handler.handle(recommendationEvent));
 
