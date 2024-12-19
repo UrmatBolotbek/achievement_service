@@ -11,15 +11,15 @@ jobs:
     permissions:
       contents: read
 
-    services:
-      postgres:
-        image: postgres:13.6
-        ports:
-          - 5432:5432
-      redis:
-        image: redis/redis-stack:latest
-        ports:
-          - 6379:6379
+#    services:
+#      postgres:
+#        image: postgres:13.6
+#        ports:
+#          - 5432:5432
+#      redis:
+#        image: redis/redis-stack:latest
+#        ports:
+#          - 6379:6379
 
     steps:
       - name: Checkout code
@@ -37,17 +37,17 @@ jobs:
       - name: Build
         run: ./gradlew build -x test
 
-      - name: Wait for PostgreSQL to be ready
-        run: |
-          while ! pg_isready -h localhost -p 5432 -U user; do
-            sleep 1
-          done
-
-      - name: Wait for Redis to be ready
-        run: |
-          until redis-cli -h localhost -p 6379 ping; do
-            sleep 1
-          done
+#      - name: Wait for PostgreSQL to be ready
+#        run: |
+#          while ! pg_isready -h localhost -p 5432 -U user; do
+#            sleep 1
+#          done
+#
+#      - name: Wait for Redis to be ready
+#        run: |
+#          until redis-cli -h localhost -p 6379 ping; do
+#            sleep 1
+#          done
 
       - name: Run tests
         run: ./gradlew test
