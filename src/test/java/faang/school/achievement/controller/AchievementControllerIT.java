@@ -1,6 +1,12 @@
 package faang.school.achievement.controller;
 
 import com.redis.testcontainers.RedisContainer;
+import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.UserAchievement;
+import faang.school.achievement.repository.AchievementRepository;
+import faang.school.achievement.repository.UserAchievementRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -91,12 +97,11 @@ public class AchievementControllerIT {
     }
 
     @Test
-//    @Sql(scripts = "/db/changelog/changeset/test.sql")
     void testGetAchievementsByUserIdWithException() throws Exception {
         mockMvc.perform(get("/api/v1/achievements/user").header("x-user-id", 11))
                 .andExpect(status().isNotFound());
     }
-//
+
     @Test
     void testGetAchievementsInProgressByUserIdException() throws Exception {
         mockMvc.perform(get("/api/v1/achievements/user/in_progress").header("x-user-id", 1))
