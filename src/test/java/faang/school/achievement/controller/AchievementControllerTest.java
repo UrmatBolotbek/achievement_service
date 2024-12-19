@@ -77,7 +77,7 @@ public class AchievementControllerTest {
         long ACHIEVEMENT_ID = 19L;
         when(achievementService.getAchievementById(ACHIEVEMENT_ID)).thenReturn(responseDto);
 
-        mockMvc.perform(get("/api/v1/achievements/" + ACHIEVEMENT_ID + "/achievement"))
+        mockMvc.perform(get("/api/v1/achievements/" + ACHIEVEMENT_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value(responseDto.getTitle()))
                 .andExpect(jsonPath("$.description").value(responseDto.getDescription()));
