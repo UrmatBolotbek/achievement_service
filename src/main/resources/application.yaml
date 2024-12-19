@@ -25,13 +25,10 @@ spring:
         achievement-channel: achievement-channel
         profile-pic-channel: profile-pic-channel
         recommendation-channel: recommendation-given
+        follower-event-channel: follower-channel
 
 server:
   port: 8085
-
-achievement:
-  nice-guy: NICE_GUY
-  profile-pic: HANDSOME
 
 async:
   pool-size: 10
@@ -45,8 +42,3 @@ logging:
 project-service:
   host: localhost
   port: 8082
-
-services:
-  user-service:
-    host: http://localhost
-    port: 8080
