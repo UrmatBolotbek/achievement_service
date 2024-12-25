@@ -21,12 +21,6 @@ public class AchievementController {
     private final AchievementService achievementService;
     private final UserContext userContext;
 
-    @GetMapping("/user/{userId}")
-    public List<AchievementResponseDto> getAchievementsWithUserId(@PathVariable long userId) {
-        return null;
-//        return achievementService.getAchievementsByUserId(userId);
-    }
-
     @GetMapping("/filters")
     public List<AchievementResponseDto> getAchievements(@ModelAttribute AchievementRequestFilterDto requestDto) {
         return achievementService.getAchievementsWithFilters(requestDto);
@@ -46,10 +40,5 @@ public class AchievementController {
     public List<AchievementResponseDto> getAchievementsInProgressByUserId() {
         return achievementService.getAchievementsInProgressByUserId(userContext.getUserId());
     }
-
-//    @GetMapping("/in_progress/{userId}")
-//    public List<AchievementResponseDto> getAchievementsInProgressWithUserId(@PathVariable long userId) {
-//        return achievementService.getAchievementsInProgressByUserId(userId);
-//    }
 
 }
