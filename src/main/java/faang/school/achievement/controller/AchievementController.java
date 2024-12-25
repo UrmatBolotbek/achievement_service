@@ -41,4 +41,9 @@ public class AchievementController {
         return achievementService.getAchievementsInProgressByUserId(userContext.getUserId());
     }
 
+    @GetMapping("/in_progress/{userId}")
+    public List<AchievementResponseDto> getAchievementsInProgressWithUserId(@PathVariable long userId) {
+        return achievementService.getAchievementsInProgressByUserId(userId);
+    }
+
 }
