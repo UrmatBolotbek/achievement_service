@@ -23,7 +23,8 @@ public class AchievementController {
 
     @GetMapping("/user/{userId}")
     public List<AchievementResponseDto> getAchievementsWithUserId(@PathVariable long userId) {
-        return achievementService.getAchievementsByUserId(userId);
+        return null;
+//        return achievementService.getAchievementsByUserId(userId);
     }
 
     @GetMapping("/filters")
