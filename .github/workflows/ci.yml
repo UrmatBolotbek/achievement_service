@@ -66,5 +66,8 @@ jobs:
       - name: Show PostgreSQL logs
         run: docker logs ${{ job.services.postgres.id }}
 
+#      - name: Run integration tests
+#        run: ./gradlew test --tests "faang.school.achievement.controller.AchievementControllerIT"
+
       - name: Tests
         run: ./gradlew test
