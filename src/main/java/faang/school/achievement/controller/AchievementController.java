@@ -21,7 +21,7 @@ public class AchievementController {
     private final AchievementService achievementService;
     private final UserContext userContext;
 
-    @GetMapping("{userId}")
+    @GetMapping("/user/{userId}")
     public List<AchievementResponseDto> getAchievementsWithUserId(@PathVariable long userId) {
         return achievementService.getAchievementsByUserId(userId);
     }

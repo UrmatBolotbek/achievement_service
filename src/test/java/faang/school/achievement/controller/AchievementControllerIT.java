@@ -90,8 +90,7 @@ public class AchievementControllerIT {
 
     @Test
     void testGetAchievementsByIdSuccess() throws Exception {
-        mockMvc.perform(get("/api/v1/achievements/" + 1)
-                        .header("x-user-id", 10))
+        mockMvc.perform(get("/api/v1/achievements/" + 1).header("x-user-id", 11))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("COLLECTOR"));
     }
@@ -111,7 +110,7 @@ public class AchievementControllerIT {
     @Test
     void testGetAchievementsSuccess() throws Exception {
         mockMvc.perform(get("/api/v1/achievements/filters?title=COLLECTOR")
-                .header("x-user-id", 10))
+                        .header("x-user-id", 10))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("COLLECTOR"));
     }
