@@ -21,10 +21,10 @@ public class AchievementController {
     private final AchievementService achievementService;
     private final UserContext userContext;
 
-//    @GetMapping("/user/{userId}")
-//    public List<AchievementResponseDto> getAchievementsWithUserId(@PathVariable long userId) {
-//        return achievementService.getAchievementsByUserId(userId);
-//    }
+    @GetMapping("/test/user/{userId}")
+    public List<AchievementResponseDto> getAchievementsWithUserId(@PathVariable long userId) {
+        return achievementService.getAchievementsByUserId(userId);
+    }
 
     @GetMapping("/filters")
     public List<AchievementResponseDto> getAchievements(@ModelAttribute AchievementRequestFilterDto requestDto) {
