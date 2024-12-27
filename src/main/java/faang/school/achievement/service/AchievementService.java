@@ -1,6 +1,9 @@
 package faang.school.achievement.service;
 
+import faang.school.achievement.dto.AchievementRequestFilterDto;
+import faang.school.achievement.dto.AchievementResponseDto;
 import faang.school.achievement.event.PublishEvent;
+import faang.school.achievement.mapper.AchievementMapper;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.model.UserAchievement;
@@ -8,6 +11,8 @@ import faang.school.achievement.publisher.EventPublisher;
 import faang.school.achievement.repository.AchievementProgressRepository;
 import faang.school.achievement.repository.AchievementRepository;
 import faang.school.achievement.repository.UserAchievementRepository;
+import faang.school.achievement.service.achievement_filter.AchievementFilter;
+import faang.school.achievement.validator.AchievementValidator;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +22,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -25,6 +33,9 @@ public class AchievementService {
     private final AchievementProgressRepository achievementProgressRepository;
     private final EventPublisher eventPublisher;
     private final AchievementRepository achievementRepository;
+    private final List<AchievementFilter> filters;
+    private final AchievementMapper mapper;
+    private final AchievementValidator achievementValidator;
 
     @Cacheable(value = "achievement")
     public Achievement getByTitle(String title) {
@@ -71,5 +82,35 @@ public class AchievementService {
                 .build();
         eventPublisher.publish(publishEvent);
         log.info("Achievement: {} for authorId: {} publish successfully", achievement, userId);
+    }
+
+    public List<AchievementResponseDto> getAchievementsWithFilters(AchievementRequestFilterDto requestFilterDto) {
+        Stream<Achievement> achievements = achievementRepository.findAll().stream().toList().stream();
+        filters.stream()
+                .filter(filter -> filter.isApplicable(requestFilterDto))
+                .forEach(filter -> filter.apply(achievements, requestFilterDto));
+        log.info("Getting a list of achievement after filtering");
+        return mapper.toResponseDtoList(achievements.toList());
+    }
+
+    public List<AchievementResponseDto> getAchievementsByUserId(long userId) {
+        List<UserAchievement> achievementsOfUser = userAchievementRepository.findByUserId(userId);
+        achievementValidator.validateListAchievementByUser(achievementsOfUser, userId);
+        List<Achievement> achievements = achievementsOfUser.stream().map(UserAchievement::getAchievement).toList();
+        log.info("Getting a list of achievement for user id {}", userId);
+        return mapper.toResponseDtoList(achievements);
+    }
+
+    public AchievementResponseDto getAchievementById(long achievementId) {
+        Achievement achievement = achievementValidator.validateAchievement(achievementId);
+        return mapper.achievementToResponseDto(achievement);
+    }
+
+    public List<AchievementResponseDto> getAchievementsInProgressByUserId(long userId) {
+        List<AchievementProgress> achievementProgresses = achievementProgressRepository.findByUserId(userId);
+        achievementValidator.validateListAchievementInProgressByUser(achievementProgresses, userId);
+        List<Achievement> achievements = achievementProgresses.stream().map(AchievementProgress::getAchievement).toList();
+        log.info("Getting a list of achievement in progress for user id {}", userId);
+        return mapper.toResponseDtoList(achievements);
     }
 }
