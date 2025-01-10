@@ -21,8 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -65,14 +63,14 @@ public class AchievementServiceTest {
     void testGetByTitleNotInCacheButInDB() {
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
 
-        Achievement result = achievementService.getByTitle("HANDSOME");
+        Achievement result = achievementService.getAchievement("HANDSOME");
         Assertions.assertEquals(achievement, result);
     }
 
     @Test
     void testGetAchievementSuccess() {
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
-        assertDoesNotThrow(() -> achievementService.getByTitle("HANDSOME"));
+        assertDoesNotThrow(() -> achievementService.getAchievement("HANDSOME"));
     }
 
     @Test
