@@ -1,6 +1,8 @@
 package faang.school.achievement.handler.recommendation;
 
+import faang.school.achievement.event.RecommendationEvent;
 import faang.school.achievement.model.Achievement;
+import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +28,7 @@ public class NiceGuyAchievementHandlerTest {
     @BeforeEach
     public void setUp() {
         achievement = Achievement.builder()
-                .title("NICE GUY")
+                .title("NICE_GUY")
                 .id(9L)
                 .points(5L)
                 .build();
@@ -34,14 +36,18 @@ public class NiceGuyAchievementHandlerTest {
 
     @Test
     void testHandleSuccess() {
-        when(service.getAchievement("NICE GUY")).thenReturn(achievement);
-        when(service.hasAchievement(1L, 9L)).thenReturn(false);
-        when(service.getProgress(1L, 9L)).thenReturn(6L);
+        RecommendationEvent recommendationEvent = new RecommendationEvent(1L, 10L, "content");
 
-        assertDoesNotThrow(() -> handler.handleAchievement(1L, "NICE GUY"));
+        AchievementProgress achievementProgress = new AchievementProgress();
+        achievementProgress.setCurrentPoints(5L);
+
+        when(service.getByTitle("NICE_GUY")).thenReturn(achievement);
+        when(service.hasAchievement(1L, 9L)).thenReturn(false);
+        when(service.getProgress(1L, 9L)).thenReturn(achievementProgress);
+
+        assertDoesNotThrow(() -> handler.handle(recommendationEvent));
 
         verify(service).createProgressIfNecessary(1L, 9L);
         verify(service).giveAchievement(1L, achievement);
     }
 }
-

@@ -63,14 +63,14 @@ public class AchievementServiceTest {
     void testGetByTitleNotInCacheButInDB() {
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
 
-        Achievement result = achievementService.getAchievement("HANDSOME");
+        Achievement result = achievementService.getByTitle("HANDSOME");
         Assertions.assertEquals(achievement, result);
     }
 
     @Test
     void testGetAchievementSuccess() {
         when(achievementRepository.findByTitle("HANDSOME")).thenReturn(Optional.of(achievement));
-        assertDoesNotThrow(() -> achievementService.getAchievement("HANDSOME"));
+        assertDoesNotThrow(() -> achievementService.getByTitle("HANDSOME"));
     }
 
     @Test

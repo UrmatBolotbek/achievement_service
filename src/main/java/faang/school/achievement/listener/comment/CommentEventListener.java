@@ -9,24 +9,23 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class CommentEventListener extends AbstractEventListener<CommentEvent> {
 
     @Value("${spring.data.redis.channels.comment-channel}")
     private String commentChannel;
-    private final EventHandler<CommentEvent> angryCommenterAchievementHandler;
 
-    public CommentEventListener(
-            ObjectMapper objectMapper,
-            RedisMessageListenerContainer container,
-            EventHandler<CommentEvent> angryCommenterAchievementHandler) {
-        super(objectMapper, container);
-        this.angryCommenterAchievementHandler = angryCommenterAchievementHandler;
+    public CommentEventListener(List<EventHandler<CommentEvent>> eventHandlers,
+                                RedisMessageListenerContainer container,
+                                ObjectMapper objectMapper) {
+        super(eventHandlers, container, objectMapper);
     }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        handleEvent(message, CommentEvent.class, angryCommenterAchievementHandler::handle);
+        handleEvent(message, CommentEvent.class);
     }
 
     @Override

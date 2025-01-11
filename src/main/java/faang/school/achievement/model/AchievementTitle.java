@@ -4,5 +4,6 @@ public enum AchievementTitle {
     NICE_GUY,
     HANDSOME,
     CELEBRITY,
-    BLOGGER
+    BLOGGER,
+    ANGRY_COMMENTER
 }

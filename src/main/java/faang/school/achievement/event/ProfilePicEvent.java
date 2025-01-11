@@ -8,5 +8,4 @@ import lombok.Data;
 public class ProfilePicEvent {
     private long userId;
     private String picUrl;
-
 }

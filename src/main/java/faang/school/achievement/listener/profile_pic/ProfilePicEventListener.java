@@ -9,23 +9,23 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ProfilePicEventListener extends AbstractEventListener<ProfilePicEvent> {
 
     @Value("${spring.data.redis.channels.profile-pic-channel}")
     private String topicProfilePic;
-    private final EventHandler<ProfilePicEvent> handsomeAchievementHandler;
 
-    public ProfilePicEventListener(ObjectMapper objectMapper,
+    public ProfilePicEventListener(List<EventHandler<ProfilePicEvent>> eventHandlers,
                                    RedisMessageListenerContainer container,
-                                   EventHandler<ProfilePicEvent> handsomeAchievementHandler) {
-        super(objectMapper, container);
-        this.handsomeAchievementHandler = handsomeAchievementHandler;
+                                   ObjectMapper objectMapper) {
+        super(eventHandlers, container, objectMapper);
     }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        handleEvent(message, ProfilePicEvent.class, handsomeAchievementHandler::handle);
+        handleEvent(message, ProfilePicEvent.class);
     }
 
     @Override

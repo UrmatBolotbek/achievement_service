@@ -9,24 +9,23 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class RecommendationEventListener extends AbstractEventListener<RecommendationEvent> {
 
     @Value("${spring.data.redis.channels.recommendation-channel}")
     private String topicRecommendation;
-    private final EventHandler<RecommendationEvent> niceGuyAchievementHandler;
 
-    public RecommendationEventListener(
-            ObjectMapper objectMapper,
-            RedisMessageListenerContainer container,
-            EventHandler<RecommendationEvent> niceGuyAchievementHandler) {
-        super(objectMapper, container);
-        this.niceGuyAchievementHandler = niceGuyAchievementHandler;
+    public RecommendationEventListener(List<EventHandler<RecommendationEvent>> eventHandlers,
+                                       RedisMessageListenerContainer container,
+                                       ObjectMapper objectMapper) {
+        super(eventHandlers, container, objectMapper);
     }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        handleEvent(message, RecommendationEvent.class, niceGuyAchievementHandler::handle);
+        handleEvent(message, RecommendationEvent.class);
     }
 
     @Override

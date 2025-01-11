@@ -3,16 +3,12 @@ package faang.school.achievement.handler.subscription;
 import faang.school.achievement.event.FollowerEvent;
 import faang.school.achievement.handler.AbstractAchievementHandler;
 import faang.school.achievement.service.AchievementService;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Value;
+import faang.school.achievement.model.AchievementTitle;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BloggerAchievementHandler extends AbstractAchievementHandler<FollowerEvent> {
-
-    @Value("${achievement.blogger}")
-    private String blogger;
 
     public BloggerAchievementHandler(AchievementService achievementService) {
         super(achievementService);
@@ -20,8 +16,7 @@ public class BloggerAchievementHandler extends AbstractAchievementHandler<Follow
 
     @Override
     @Async("fixedThreadPool")
-    @Transactional
     public void handle(FollowerEvent event) {
-        handleAchievement(event.getFolloweeId(), blogger);
+        handleAchievement(event.getFolloweeId(), AchievementTitle.BLOGGER);
     }
 }

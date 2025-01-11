@@ -1,6 +1,7 @@
-package faang.school.achievement.handler.subscription;
+package faang.school.achievement.handler.comment;
 
-import faang.school.achievement.event.FollowerEvent;
+
+import faang.school.achievement.event.CommentEvent;
 import faang.school.achievement.model.Achievement;
 import faang.school.achievement.model.AchievementProgress;
 import faang.school.achievement.service.AchievementService;
@@ -16,38 +17,37 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class BloggerAchievementHandlerTest {
+class AngryCommenterAchievementHandlerTest {
     @Mock
     private AchievementService service;
-
     @InjectMocks
-    private BloggerAchievementHandler handler;
+    private AngryCommenterAchievementHandler handler;
 
     private Achievement achievement;
 
     @BeforeEach
     public void setUp() {
         achievement = Achievement.builder()
-                .title("BLOGGER")
-                .id(3L)
-                .points(500L)
+                .title("ANGRY_COMMENTER")
+                .id(4L)
+                .points(100L)
                 .build();
     }
 
     @Test
     void testHandleSuccess() {
-        FollowerEvent followerEvent = new FollowerEvent();
-        followerEvent.setFolloweeId(1L);
+        CommentEvent commentEvent = new CommentEvent();
+        commentEvent.setCommentAuthorId(1L);
         AchievementProgress achievementProgress = new AchievementProgress();
-        achievementProgress.setCurrentPoints(500L);
+        achievementProgress.setCurrentPoints(100L);
 
-        when(service.getByTitle("BLOGGER")).thenReturn(achievement);
-        when(service.hasAchievement(1L, 3L)).thenReturn(false);
-        when(service.getProgress(1L, 3L)).thenReturn(achievementProgress);
+        when(service.getByTitle("ANGRY_COMMENTER")).thenReturn(achievement);
+        when(service.hasAchievement(1L, 4L)).thenReturn(false);
+        when(service.getProgress(1L, 4L)).thenReturn(achievementProgress);
 
-        assertDoesNotThrow(() -> handler.handle(followerEvent));
+        assertDoesNotThrow(() -> handler.handle(commentEvent));
 
-        verify(service).createProgressIfNecessary(1L, 3L);
+        verify(service).createProgressIfNecessary(1L, 4L);
         verify(service).giveAchievement(1L, achievement);
     }
 }
