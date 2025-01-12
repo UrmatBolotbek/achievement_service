@@ -1,7 +1,7 @@
-package faang.school.achievement.listener.profile_pic;
+package faang.school.achievement.listener.comment;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import faang.school.achievement.event.ProfilePicEvent;
+import faang.school.achievement.event.CommentEvent;
 import faang.school.achievement.handler.EventHandler;
 import faang.school.achievement.listener.AbstractEventListener;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,24 +12,24 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class ProfilePicEventListener extends AbstractEventListener<ProfilePicEvent> {
+public class CommentEventListener extends AbstractEventListener<CommentEvent> {
 
-    @Value("${spring.data.redis.channels.profile-pic-channel}")
-    private String topicProfilePic;
+    @Value("${spring.data.redis.channels.comment-channel}")
+    private String commentChannel;
 
-    public ProfilePicEventListener(List<EventHandler<ProfilePicEvent>> eventHandlers,
-                                   RedisMessageListenerContainer container,
-                                   ObjectMapper objectMapper) {
+    public CommentEventListener(List<EventHandler<CommentEvent>> eventHandlers,
+                                RedisMessageListenerContainer container,
+                                ObjectMapper objectMapper) {
         super(eventHandlers, container, objectMapper);
     }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        handleEvent(message, ProfilePicEvent.class);
+        handleEvent(message, CommentEvent.class);
     }
 
     @Override
     protected String getTopicName() {
-        return topicProfilePic;
+        return commentChannel;
     }
 }

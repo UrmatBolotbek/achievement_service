@@ -26,6 +26,7 @@ spring:
         profile-pic-channel: profile-pic-channel
         recommendation-channel: recommendation-given
         follower-event-channel: follower-channel
+        comment-channel: comment-topic
 
 server:
   port: 8085

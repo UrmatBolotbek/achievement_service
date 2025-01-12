@@ -13,6 +13,7 @@ import java.util.List;
 
 @Component
 public class FollowerEventListener extends AbstractEventListener<FollowerEvent> {
+
     @Value("${spring.data.redis.channels.follower-event-channel}")
     private String topicFollower;
 

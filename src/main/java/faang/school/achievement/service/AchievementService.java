@@ -16,11 +16,9 @@ import faang.school.achievement.validator.AchievementValidator;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -58,7 +56,7 @@ public class AchievementService {
         );
     }
 
-    @CachePut(value =  "progress")
+    @CachePut(value = "progress")
     public AchievementProgress incrementProgress(AchievementProgress achievementProgress) {
         achievementProgress.increment();
         log.info("Achievement progress for authorId: {} has incremented successfully", achievementProgress.getUserId());

@@ -13,6 +13,7 @@ import java.util.List;
 
 @Component
 public class RecommendationEventListener extends AbstractEventListener<RecommendationEvent> {
+
     @Value("${spring.data.redis.channels.recommendation-channel}")
     private String topicRecommendation;
 

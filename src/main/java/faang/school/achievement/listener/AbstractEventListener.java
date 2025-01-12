@@ -16,15 +16,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public abstract class AbstractEventListener<T> implements MessageListener {
+
     private final List<EventHandler<T>> handlers;
     private final RedisMessageListenerContainer container;
     private final ObjectMapper objectMapper;
+
 
     @PostConstruct
     public void init() {
         container.addMessageListener(this, new ChannelTopic(getTopicName()));
         log.info("Registered listener {} on topic {}", this.getClass().getSimpleName(), getTopicName());
-
     }
 
     protected void handleEvent(Message message, Class<T> clazz) {

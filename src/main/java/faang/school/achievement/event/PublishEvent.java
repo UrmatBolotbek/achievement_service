@@ -10,5 +10,4 @@ public class PublishEvent {
     private long achievementId;
     private String achievementName;
     private String achievementDescription;
-
 }

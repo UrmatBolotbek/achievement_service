@@ -12,6 +12,4 @@ public interface AchievementMapper {
     AchievementResponseDto achievementToResponseDto(Achievement achievement);
 
     List<AchievementResponseDto> toResponseDtoList(List<Achievement> achievements);
-
-
 }
