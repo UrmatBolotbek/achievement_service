@@ -1,109 +1,64 @@
-# Service Template
+# Achievement Service
 
-Стандартный шаблон проекта на SpringBoot
+**Achievement Service** is a microservice that manages user achievements as part of our integrated application ecosystem. It handles the issuance, publication, retrieval, and caching of achievements, ensuring that other services (such as Notification Service) can be promptly informed about important events.
 
-# Использованные технологии
+---
 
-* [Spring Boot](https://spring.io/projects/spring-boot) – как основной фрэймворк
-* [PostgreSQL](https://www.postgresql.org/) – как основная реляционная база данных
-* [Redis](https://redis.io/) – как кэш и очередь сообщений через pub/sub
-* [testcontainers](https://testcontainers.com/) – для изолированного тестирования с базой данных
-* [Liquibase](https://www.liquibase.org/) – для ведения миграций схемы БД
-* [Gradle](https://gradle.org/) – как система сборки приложения
-* [Lombok](https://projectlombok.org/) – для удобной работы с POJO классами
-* [MapStruct](https://mapstruct.org/) – для удобного маппинга между POJO классами
+## Overview
 
-# База данных
+- **Event Publication:**  
+  When an achievement is granted to a user, the service publishes an event to a Redis topic (e.g., `achievement_channel`). This allows other microservices to react—such as sending notifications—without directly coupling to the achievement logic.
 
-* База поднимается в отдельном сервисе [infra](../infra)
-* Redis поднимается в единственном инстансе тоже в [infra](../infra)
-* Liquibase сам накатывает нужные миграции на голый PostgreSql при старте приложения
-* В тестах используется [testcontainers](https://testcontainers.com/), в котором тоже запускается отдельный инстанс
-  postgres
-* В коде продемонстрирована работа как с JdbcTemplate, так и с JPA (Hibernate)
+- **Comprehensive Achievement Management:**  
+  The service provides RESTful APIs (through its controllers) to retrieve:
+  - All available achievements (with filtering by name, description, and rarity).
+  - Achievements for a specific user.
+  - Details for a single achievement.
+  - Unreceived achievements along with the user’s progress.
+  
+- **In-Memory Caching:**  
+  Since the set of achievements is relatively static and small, the service caches all achievements in memory for fast retrieval. The cache is populated at startup using data from the database, reducing unnecessary load on persistent storage.
 
-# Как начать разработку начиная с шаблона?
+---
 
-1. Сначала нужно склонировать этот репозиторий
+## Key Features
 
-```shell
-git clone https://github.com/FAANG-School/ServiceTemplate
-```
+- **Redis Pub/Sub Integration:**  
+  - **AchievementPublisher:** Publishes achievement events as JSON messages to the Redis topic `achievement_channel` using a configured `RedisTemplate` and `ObjectMapper`.
+  - **Configuration:** Beans for Redis (via `RedisConfig` and `AchievementRedisConfig`) are set up to support pub/sub messaging.
 
-2. Далее удаляем служебную директорию для git
+- **RESTful Achievement API:**  
+  - Provides endpoints for fetching achievements by various criteria (e.g., filtering by name, description, rarity) and for retrieving a user’s achievements and progress.
+  - Uses robust validation and type conversion (e.g., converting strings or numbers to enum types for event and interval parameters).
 
-```shell
-# Переходим в корневую директорию проекта
-cd ServiceTemplate
-rm -rf .git
-```
+- **Efficient In-Memory Cache:**  
+  - **AchievementCache:** Loads all achievements from the database on startup (using `@PostConstruct` in conjunction with `AchievementRepository`) into a data structure keyed by achievement title for fast lookup.
+  - This caching mechanism improves performance by avoiding frequent database queries for static achievement data.
 
-3. Далее нужно создать совершенно пустой репозиторий в github/gitlab
+---
 
-4. Создаём новый репозиторий локально и коммитим изменения
+## Architecture and Technologies
 
-```shell
-git init
-git remote add origin <link_to_repo>
-git add .
-git commit -m "<msg>"
-```
+This service follows the standard Spring Boot project template and integrates seamlessly with the rest of our microservices architecture.
 
-Готово, можно начинать работу!
+### Technologies Used
 
-# Как запустить локально?
+- [Spring Boot](https://spring.io/projects/spring-boot) – Main framework for building the application.
+- [PostgreSQL](https://www.postgresql.org/) – Primary relational database.
+- [Redis](https://redis.io/) – Used for caching and pub/sub messaging.
+- [Testcontainers](https://testcontainers.com/) – For isolated integration testing with a real database.
+- [Liquibase](https://www.liquibase.org/) – Manages database schema migrations.
+- [Gradle](https://gradle.org/) – Build system.
+- [Lombok](https://projectlombok.org/) – Simplifies POJO code.
+- [MapStruct](https://mapstruct.org/) – For mapping between POJO classes.
 
-Сначала нужно развернуть базу данных из директории [infra](../infra)
+### Database & Infrastructure
 
-Далее собрать gradle проект
+- **Database and Redis Instances:**  
+  Both PostgreSQL and Redis are managed as part of our infrastructure (see the [infra](../infra) service).
+- **Liquibase Migrations:**  
+  Schema changes are automatically applied at startup.
+- **Testing:**  
+  Integration tests use Testcontainers to spin up isolated instances of PostgreSQL and Redis.
 
-```shell
-# Нужно запустить из корневой директории, где лежит build.gradle.kts
-gradle build
-```
-
-Запустить jar'ник
-
-```shell
-java -jar build/libs/ServiceTemplate-1.0.jar
-```
-
-Но легче всё это делать через IDE
-
-# Код
-
-RESTful приложения калькулятор с единственным endpoint'ом, который принимает 2 числа и выдает результаты их сложения,
-вычитаяни, умножения и деления
-
-* Обычная трёхслойная
-  архитектура – [Controller](src/main/java/faang/school/achievement/controller), [Service](src/main/java/faang/school/achievement/service), [Repository](src/main/java/faang/school/achievement/repository)
-* Слой Repository реализован и на jdbcTemplate, и на JPA (Hibernate)
-* Написан [GlobalExceptionHandler](src/main/java/faang/school/achievement/controller/GlobalExceptionHandler.java)
-  который умеет возвращать ошибки в формате `{"code":"CODE", "message": "message"}`
-* Используется TTL кэширование вычислений
-  в [CalculationTtlCacheService](src/main/java/faang/school/achievement/service/cache/CalculationTtlCacheService.java)
-* Реализован простой Messaging через [Redis pub/sub](https://redis.io/docs/manual/pubsub/)
-  * [Конфигурация](src/main/java/faang/school/achievement/config/RedisConfig.java) –
-    сетапится [RedisTemplate](https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/RedisTemplate.html) –
-    класс, для удобной работы с Redis силами Spring
-  * [Отправитель](src/main/java/faang/school/achievement/service/messaging/RedisCalculationPublisher.java) – генерит
-    рандомные запросы и отправляет в очередь
-  * [Получатель](src/main/java/faang/school/achievement/service/messaging/RedisCalculationSubscriber.java) –
-    получает запросы и отправляет задачи асинхронно выполняться
-    в [воркер](src/main/java/faang/school/achievement/service/worker/CalculationWorker.java)
-
-# Тесты
-
-Написаны только для единственного REST endpoint'а
-* SpringBootTest
-* MockMvc
-* Testcontainers
-* AssertJ
-* JUnit5
-* Parameterized tests
-
-# TODO
-
-* Dockerfile, который подключается к сети запущенной postgres в docker-compose
-* Redis connectivity
-* ...
+---
